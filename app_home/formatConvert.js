@@ -1,0 +1,1 @@
+global.output = 10 + 15;

@@ -1,0 +1,77 @@
+.App {
+  display: flex;
+  flex-flow: row nowrap;
+  text-align: center;
+  height: 100%;
+}
+
+.App_SideNavContainer {
+  width: 300px;
+  background-color: red;
+}
+
+.contentContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+}
+
+.AppLogo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+
+.tabBar {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.activeTab {
+  display: inline-block;
+  background-color: green;
+  color: white;
+}
+
+button.save {
+  background-color: orange;
+  color: white;
+  margin-left: auto;
+}
+
+button.run {
+  background-color: red;
+  color: white;
+}
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .AppLogo {
+    animation: App-logo-float infinite 3s ease-in-out;
+  }
+}
+
+.AppHeader {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.AppLink {
+  color: rgb(112, 76, 182);
+}
+
+@keyframes App-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px)
+  }
+  100% {
+    transform: translateY(0px)
+  }
+}

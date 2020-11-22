@@ -1,0 +1,49 @@
+{
+  "extends": "airbnb",
+  "plugins": ["jest"],
+  "parser": "babel-eslint",
+  "env": {
+    "es6": true,
+    "browser": true,
+    "jest/globals": true
+  },
+  "ignorePatterns": [ "app_home/*"],
+  "settings": {
+    "import/core-modules": ["electron"]
+  },
+  "rules": {
+    "arrow-body-style": "off",
+    "arrow-parens": ["error", "as-needed"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "objects": "always-multiline",
+      "functions": "never"
+    }],
+    "implicit-arrow-linebreak": "off",
+    "max-len": ["error", { "code": 140 }],
+    "no-param-reassign": ["error", { "props": false }],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+      }
+    ],
+    "no-shadow": "off",
+    "no-underscore-dangle": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-use-before-define": ["error", { "functions": false, "classes": true }],
+    "operator-linebreak": ["error", "after"],
+    "prefer-destructuring": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-curly-newline": "off",
+  }
+}
