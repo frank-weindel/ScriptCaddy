@@ -13,17 +13,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { configureStore } from '@reduxjs/toolkit';
-import appReducer from '../slices/app';
-import modalReducer from '../slices/modal';
-import scriptManagerReducer from '../slices/scriptManager';
-import themeReducer from '../slices/theme';
+import { createSlice } from '@reduxjs/toolkit';
 
-export default configureStore({
-  reducer: {
-    app: appReducer,
-    scriptManager: scriptManagerReducer,
-    modal: modalReducer,
-    theme: themeReducer,
+export const theme = createSlice({
+  name: 'theme',
+  initialState: {
+    aceTheme: undefined,
+  },
+  reducers: {
+    setThemeVars(state, action) {
+      return action.payload;
+    },
   },
 });
+
+export const { setThemeVars } = theme.actions;
+
+export default theme.reducer;

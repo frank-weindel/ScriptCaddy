@@ -18,6 +18,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './App';
 import store from './app/store';
+import themeManager from './themeManager';
 import {
   refreshScripts,
   consoleLog,
@@ -25,6 +26,7 @@ import {
   setOutput,
 } from './slices/scriptManager';
 import { confirmModal } from './slices/modal';
+import { setThemeVars } from './slices/theme';
 
 import './index.less';
 
@@ -58,6 +60,10 @@ import './index.less';
     window.launchAbout();
   });
 
+  window.myAPI.on('setTheme', (event, theme) => {
+    themeManager.setTheme(theme);
+  });
+
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>
@@ -68,4 +74,11 @@ import './index.less';
   );
 
   store.dispatch(refreshScripts());
+
+  themeManager.setTheme('light');
+  themeManager.onThemeLoad = computedStyles => {
+    store.dispatch(setThemeVars({
+      aceTheme: computedStyles.getPropertyValue('--ace-theme').trim(),
+    }));
+  };
 })();

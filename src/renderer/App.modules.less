@@ -7,7 +7,7 @@
 
 .App_SideNavContainer {
   width: 300px;
-  background-color: red;
+  background-color: var(--bg-color);
 }
 
 .contentContainer {
@@ -27,9 +27,15 @@
   flex-flow: row nowrap;
 }
 
+.tab {
+  border: none;
+  background-color: white;
+  border-radius: unset;
+}
+
 .activeTab {
   display: inline-block;
-  background-color: green;
+  background-color: var(--selected-color);
   color: white;
 }
 

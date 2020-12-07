@@ -54,6 +54,14 @@
       "pre-commit": "npm run test:lint"
     }
   },
+  "staticFiles": {
+    "staticPath": [
+      {
+          "staticPath": "themes",
+          "staticOutDir": "themes"
+      }
+    ]
+  },
   "author": "Frank Weindel",
   "license": "GPL-3.0-only",
   "devDependencies": {
@@ -80,6 +88,7 @@
     "jest-transform-stub": "^2.0.0",
     "less": "^3.11.3",
     "parcel": "^1.12.4",
+    "parcel-plugin-static-files-copy": "^2.5.0",
     "wait-on": "^5.0.0"
   },
   "dependencies": {

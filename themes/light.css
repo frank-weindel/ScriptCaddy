@@ -1,0 +1,10 @@
+:root {
+  --ace-theme: github;
+
+  --font-family: sans-serif;
+  --font-color: black;
+
+  --bg-color: grey;
+  --selected-color: red;
+  --hover-color: blue;
+}

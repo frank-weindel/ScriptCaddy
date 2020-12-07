@@ -26,6 +26,7 @@ import {
 
 import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/theme-github';
 
 class CodeEditor extends React.Component {
@@ -34,6 +35,7 @@ class CodeEditor extends React.Component {
       code: state.scriptManager.scriptContent,
       scriptName: state.scriptManager.openedScriptName,
       consoleOutput: state.scriptManager.consoleOutput,
+      aceTheme: state.theme.aceTheme,
     };
   }
 
@@ -64,23 +66,23 @@ class CodeEditor extends React.Component {
   }
 
   render() {
-    const { code, consoleOutput } = this.props;
+    const { aceTheme, code, consoleOutput } = this.props;
 
     return (
       <div className={styles.CodeEditor}>
         <AceEditor
           mode="javascript"
-          theme="github"
+          theme={aceTheme}
           width="100%"
           height="100%"
           onChange={this.onCodeChange}
           value={code}
           setOptions={{ useWorker: false }}
         />
-        <div>Console:</div>
+        <div>Console</div>
         <AceEditor
           mode="text"
-          theme="github"
+          theme={aceTheme}
           width="100%"
           height="100%"
           readOnly
@@ -94,6 +96,7 @@ class CodeEditor extends React.Component {
 }
 
 CodeEditor.propTypes = {
+  aceTheme: PropTypes.string.isRequired,
   code: PropTypes.string.isRequired,
   consoleOutput: PropTypes.string.isRequired,
   setScriptContent: PropTypes.func.isRequired,

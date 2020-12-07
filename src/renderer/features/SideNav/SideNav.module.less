@@ -1,13 +1,12 @@
 .SideNav {
   display: flex;
   flex-flow: column nowrap;
-  font-weight: bold;
   height: 100%;
 }
 
 .SideNav-item {
   display: flex;
-  background-color: orange;
+  color: white;
 }
 
 .SideNav-item-title {
@@ -19,12 +18,12 @@
 }
 
 .selected {
-  background-color: aqua;
+  background-color: var(--selected-color);
 }
 
 
 .SideNav-item:hover {
-  background-color: green;
+  background-color: var(--hover-color);
   cursor: pointer;
 }
 

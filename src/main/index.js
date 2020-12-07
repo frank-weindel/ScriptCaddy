@@ -20,6 +20,7 @@ const {
   BrowserWindow,
   Menu,
   ipcMain,
+  nativeTheme,
 } = require('electron');
 const fs = require('fs');
 const path = require('path');
@@ -29,6 +30,8 @@ const isDev = require('electron-is-dev');
 console.log('Starting ScriptCaddy');
 
 const isMac = process.platform === 'darwin';
+
+nativeTheme.themeSource = 'light';
 
 function createWindow() {
   // Create the browser window.
@@ -42,6 +45,7 @@ function createWindow() {
     },
   });
 
+  const macAppMenu = { role: 'appMenu' };
   const helpMenu = {
     role: 'help',
     submenu: [
@@ -53,7 +57,25 @@ function createWindow() {
       },
     ],
   };
-  const macAppMenu = { role: 'appMenu' };
+  const themeMenu = {
+    label: 'Theme',
+    submenu: [
+      {
+        label: 'Light',
+        click: async () => {
+          mainWindow.webContents.send('setTheme', 'light');
+          nativeTheme.themeSource = 'light';
+        },
+      },
+      {
+        label: 'Dark',
+        click: async () => {
+          mainWindow.webContents.send('setTheme', 'dark');
+          nativeTheme.themeSource = 'dark';
+        },
+      },
+    ],
+  };
 
   const template = [
     ...(isMac ? [macAppMenu] : []),
@@ -61,6 +83,7 @@ function createWindow() {
     { role: 'editMenu' },
     { role: 'viewMenu' },
     { role: 'windowMenu' },
+    themeMenu,
     helpMenu,
   ];
 

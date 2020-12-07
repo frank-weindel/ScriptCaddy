@@ -1,10 +1,23 @@
-
 :global {
   html, body, #root {
     height: 100%;
-    background-color: purple;
+    background-color: var(--bg-color);
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-family: var(--font-family);
+    color: var(--font-color);
+  }
+
+  :focus {
+    outline: 1px dotted white;
+    outline-offset: -1px;
+  }
+
+  button {
+    border: none;
+    border-radius: unset;
+    background: black;
+    color: white;
   }
 }

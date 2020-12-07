@@ -1,0 +1,10 @@
+:root {
+  --ace-theme: monokai;
+
+  --font-family: sans-serif;
+  --font-color: white;
+
+  --bg-color: rgb(30, 19, 59);
+  --selected-color: rgb(84, 80, 110);
+  --hover-color: rgb(38, 38, 148);
+}

@@ -91,7 +91,7 @@ class App extends React.Component {
         <div className={styles.contentContainer}>
           <div className={styles.tabBar}>
             <button
-              className={classNames({ [styles.activeTab]: selectedTab === 'code' })}
+              className={classNames(styles.tab, { [styles.activeTab]: selectedTab === 'code' })}
               type="button"
               data-id="code"
               onClick={this.onClickTab}
@@ -99,7 +99,7 @@ class App extends React.Component {
               Code{codeDirty ? '*' : ''}
             </button>
             <button
-              className={classNames({ [styles.activeTab]: selectedTab === 'io' })}
+              className={classNames(styles.tab, { [styles.activeTab]: selectedTab === 'io' })}
               type="button"
               data-id="io"
               onClick={this.onClickTab}
