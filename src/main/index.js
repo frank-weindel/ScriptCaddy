@@ -22,7 +22,6 @@ const {
   ipcMain,
   nativeTheme,
 } = require('electron');
-const fs = require('fs');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -38,6 +37,7 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
     webPreferences: {
       contextIsolation: true,
       // webSecurity: false,
@@ -64,14 +64,12 @@ function createWindow() {
         label: 'Light',
         click: async () => {
           mainWindow.webContents.send('setTheme', 'light');
-          nativeTheme.themeSource = 'light';
         },
       },
       {
         label: 'Dark',
         click: async () => {
           mainWindow.webContents.send('setTheme', 'dark');
-          nativeTheme.themeSource = 'dark';
         },
       },
     ],
@@ -96,6 +94,16 @@ function createWindow() {
       'http://localhost:3000' :
       `file://${path.resolve(__dirname, '../../build/index.html')}`
   );
+
+  ipcMain.on('toMain', (_event, args) => {
+    if (args.msg === 'onInitComplete') {
+      // Initialize the theme and then show the window finally
+      mainWindow.webContents.send('setTheme', 'dark');
+      mainWindow.show();
+    } else if (args.msg === 'onThemeChange') {
+      nativeTheme.themeSource = args.themeSource;
+    }
+  });
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -132,9 +140,4 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') app.quit();
-});
-
-ipcMain.on('toMain', (_event, _args) => {
-  const root = fs.readdirSync('/');
-  BrowserWindow.getAllWindows()[0].webContents.send('fromMain', root);
 });

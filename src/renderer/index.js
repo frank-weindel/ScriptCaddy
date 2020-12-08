@@ -75,10 +75,14 @@ import './index.less';
 
   store.dispatch(refreshScripts());
 
-  themeManager.setTheme('light');
   themeManager.onThemeLoad = computedStyles => {
-    store.dispatch(setThemeVars({
+    const vars = {
+      themeSource: computedStyles.getPropertyValue('--theme-source').trim() || 'light',
       aceTheme: computedStyles.getPropertyValue('--ace-theme').trim(),
-    }));
+    };
+    store.dispatch(setThemeVars(vars));
+    window.api.send('toMain', { msg: 'onThemeChange', themeSource: vars.themeSource });
   };
+
+  window.api.send('toMain', { msg: 'onInitComplete' });
 })();

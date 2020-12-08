@@ -1,4 +1,5 @@
 :root {
+  --theme-source: dark;
   --ace-theme: monokai;
 
   --font-family: sans-serif;

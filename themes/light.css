@@ -1,4 +1,5 @@
 :root {
+  --theme-source: light;
   --ace-theme: github;
 
   --font-family: sans-serif;
