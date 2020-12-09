@@ -17,13 +17,14 @@ import React from 'react';
 import AceEditor from 'react-ace';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styles from './IOPage.module.less';
+import LabelBar from '../../components/LabelBar/LabelBar';
 import {
   setInput,
   setOutput,
   getInputById,
   getOutputById,
 } from '../../slices/scriptManager';
+import styles from './IOPage.module.less';
 
 class IOPage extends React.Component {
   static mapStateToProps(state) {
@@ -31,6 +32,7 @@ class IOPage extends React.Component {
       input1: getInputById(state, 1),
       input2: getInputById(state, 2),
       output1: getOutputById(state, 1),
+      aceTheme: state.theme.aceTheme,
     };
   }
 
@@ -44,30 +46,30 @@ class IOPage extends React.Component {
   render() {
     return (
       <div className={styles.IOPage}>
-        <div className={styles.ioLabel}>Input 1</div>
+        <LabelBar>Input 1</LabelBar>
         <AceEditor
           mode="text"
-          theme="github"
+          theme={this.props.aceTheme}
           width="100%"
           height="100%"
           value={this.props.input1}
           onChange={e => this.props.setInput(1, e)}
           setOptions={{ useWorker: false }}
         />
-        <div className={styles.ioLabel}>Input 2</div>
+        <LabelBar>Input 2</LabelBar>
         <AceEditor
           mode="text"
-          theme="github"
+          theme={this.props.aceTheme}
           width="100%"
           height="100%"
           value={this.props.input2}
           onChange={e => this.props.setInput(2, e)}
           setOptions={{ useWorker: false }}
         />
-        <div className={styles.ioLabel}>Output</div>
+        <LabelBar>Output</LabelBar>
         <AceEditor
           mode="text"
-          theme="github"
+          theme={this.props.aceTheme}
           width="100%"
           height="100%"
           readOnly
@@ -80,6 +82,7 @@ class IOPage extends React.Component {
 }
 
 IOPage.propTypes = {
+  aceTheme: PropTypes.string.isRequired,
   setInput: PropTypes.func.isRequired,
   input1: PropTypes.string.isRequired,
   input2: PropTypes.string.isRequired,

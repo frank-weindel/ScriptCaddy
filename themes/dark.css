@@ -6,6 +6,17 @@
   --font-color: white;
 
   --bg-color: rgb(30, 19, 59);
+  --text-color: white;
   --selected-color: rgb(84, 80, 110);
   --hover-color: rgb(38, 38, 148);
+
+  --tab-text-color:  rgb(154, 154, 154);
+  --tab-color: rgb(77, 77, 77);
+  --tab-text-selected-color: white;
+  --tab-selected-color: rgb(46, 46, 46);
+  --tab-background-color: rgb(0, 0, 0);
+
+  --save-button-color: rgb(146, 94, 0);
+  --run-button-color: rgb(146, 0, 0);
+
 }

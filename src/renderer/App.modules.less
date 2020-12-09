@@ -25,18 +25,20 @@
 .tabBar {
   display: flex;
   flex-flow: row nowrap;
+  background-color: var(--tab-background-color);
 }
 
 .tab {
   border: none;
-  background-color: white;
+  background-color: var(--tab-color);
+  color: var(--tab-text-color);
   border-radius: unset;
 }
 
 .activeTab {
   display: inline-block;
-  background-color: var(--selected-color);
-  color: white;
+  background-color: var(--tab-selected-color);
+  color: var(--tab-text-selected-color);
 }
 
 button.save {

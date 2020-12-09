@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AceEditor from 'react-ace';
-import styles from './CodeEditor.module.less';
+import LabelBar from '../../components/LabelBar/LabelBar';
 import {
   setScriptContent,
   openScript,
@@ -28,6 +28,7 @@ import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/theme-github';
+import styles from './CodeEditor.module.less';
 
 class CodeEditor extends React.Component {
   static mapStateToProps(state) {
@@ -79,7 +80,7 @@ class CodeEditor extends React.Component {
           value={code}
           setOptions={{ useWorker: false }}
         />
-        <div>Console</div>
+        <LabelBar>Console</LabelBar>
         <AceEditor
           mode="text"
           theme={aceTheme}
