@@ -14,6 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { MenuItemConstructorOptions } from 'electron';
+
 // Modules to control application life and create native browser window
 const {
   app,
@@ -45,8 +47,8 @@ function createWindow() {
     },
   });
 
-  const macAppMenu = { role: 'appMenu' };
-  const helpMenu = {
+  const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
+  const helpMenu: MenuItemConstructorOptions = {
     role: 'help',
     submenu: [
       {
@@ -57,7 +59,7 @@ function createWindow() {
       },
     ],
   };
-  const themeMenu = {
+  const themeMenu: MenuItemConstructorOptions = {
     label: 'Theme',
     submenu: [
       {
@@ -75,7 +77,7 @@ function createWindow() {
     ],
   };
 
-  const template = [
+  const template: MenuItemConstructorOptions[] = [
     ...(isMac ? [macAppMenu] : []),
     { role: 'fileMenu' },
     { role: 'editMenu' },

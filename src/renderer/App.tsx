@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 // import logo from './logo.svg';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -37,10 +37,19 @@ window.api.receive('fromMain', data => {
   console.log(`Received ${data} from main process`);
 });
 
-class App extends React.Component {
+type AppProps = {
+  selectedTab: string,
+  scriptRunning: boolean,
+  codeDirty: boolean,
+  selectTab: (string) => void,
+  runScript: () => void,
+  saveScript: () => void,
+  stopScript: () => void,
+};
+
+class App extends React.Component<AppProps> {
   static mapStateToProps(state) {
     return {
-      scriptName: state.scriptManager.openedScriptName,
       selectedTab: state.app.selectedTab,
       scriptRunning: state.scriptManager.running,
       codeDirty: state.scriptManager.dirty,
@@ -129,16 +138,6 @@ class App extends React.Component {
     );
   }
 }
-
-App.propTypes = {
-  codeDirty: PropTypes.bool.isRequired,
-  saveScript: PropTypes.func.isRequired,
-  scriptRunning: PropTypes.bool.isRequired,
-  selectedTab: PropTypes.string.isRequired,
-  selectTab: PropTypes.func.isRequired,
-  stopScript: PropTypes.func.isRequired,
-  runScript: PropTypes.func.isRequired,
-};
 
 export default connect(
   App.mapStateToProps,

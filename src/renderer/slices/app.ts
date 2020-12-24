@@ -27,8 +27,6 @@ export const app = createSlice({
   },
 });
 
-export const selectScripts = state => state.app.scripts;
-
 export const { selectTab } = app.actions;
 
 export default app.reducer;

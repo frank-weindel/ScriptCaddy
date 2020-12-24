@@ -128,7 +128,7 @@ Modal.propTypes = {
   resolveModal: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   type: PropTypes.bool.isRequired,
-  data: PropTypes.objectOf({
+  data: PropTypes.shape({
     message: PropTypes.func.isRequired,
   }).isRequired,
 };

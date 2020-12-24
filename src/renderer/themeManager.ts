@@ -1,4 +1,8 @@
 class ThemeManager {
+  _linkEl: HTMLLinkElement | undefined;
+
+  onThemeLoad: ((str: CSSStyleDeclaration) => void) | undefined
+
   listThemes() {
     return [
       'dark',
