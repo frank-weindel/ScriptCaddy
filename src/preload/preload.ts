@@ -13,21 +13,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const {
+import {
   contextBridge,
   ipcRenderer,
   shell,
-} = require('electron');
-const watch = require('node-watch');
+} from 'electron';
+import watch from 'node-watch';
 
-const ScriptLister = require('./ScriptLister');
-const ScriptRunner = require('./ScriptRunner');
+import ScriptLister from './ScriptLister';
+import ScriptRunner from './ScriptRunner';
 
 // eslint-disable-next-line no-console
 console.log('process.env', process.env);
 
 const scriptRunner = new ScriptRunner();
-
 (async () => {
   // @ts-ignore
   await watch(ScriptLister.getScriptDir(), {}, (evt, name) => {
@@ -69,8 +68,8 @@ contextBridge.exposeInMainWorld('myAPI', {
     const scriptPath = ScriptLister.getScriptPath(scriptName);
     shell.showItemInFolder(scriptPath);
   },
-  on: (...args) => {
-    return ipcRenderer.on(...args);
+  on: (channel, listener) => {
+    return ipcRenderer.on(channel, listener);
   },
 });
 

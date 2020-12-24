@@ -1,19 +1,20 @@
 {
+  // "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES6",
+    "module": "ES2020",
+    "target": "ES2020",
     "moduleResolution": "node",
     "checkJs": true,
     "allowJs": true,
     "strictNullChecks": true,
     "jsx": "react",
-    "outDir": "./build",
     "esModuleInterop": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    "outDir": "tsc-build"
   },
   "files": [
-    "./src/main/index.ts",
-    "./src/preload/preload.ts"
+    "./index.js",
+    "./types.d.ts"
   ],
   "exclude": [
     "node_modules",

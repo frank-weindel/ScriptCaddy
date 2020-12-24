@@ -14,19 +14,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const fs = require('fs');
+import fs from 'fs';
 
-const FileHelpers = {};
-
-/**
- * Check if a path exists and is a directory
- *
- * This will throw an error if the path exists and is not a directory
- *
- * @param {string} path Path to check
- * @return {boolean} true if it exists and is a directory, false if it doesn't exist
- */
-FileHelpers.dirExistsSync = function dirExistsSync(path) {
+export function dirExistsSync(path) {
   try {
     if (fs.statSync(path).isDirectory()) {
       return true;
@@ -41,24 +31,36 @@ FileHelpers.dirExistsSync = function dirExistsSync(path) {
     throw err;
   }
   throw new Error(`Path exists but isn't a directory: ${path}`);
-};
+}
 
-/**
- * Ensures a path exists, and is a directory.
- *
- * Only works with one level of directory creation right now.
- *
- * This will throw an error if the directory could not be created.
- *
- * @param {string} path
- * @return {boolean} true if directory was newly created, false if it didn't need to be
- */
-FileHelpers.ensureDirSync = function ensureDirSync(path) {
-  if (FileHelpers.dirExistsSync(path)) {
+export function ensureDirSync(path) {
+  if (dirExistsSync(path)) {
     return false;
   }
   fs.mkdirSync(path);
   return true;
-};
+}
 
-module.exports = FileHelpers;
+// /**
+//  * Check if a path exists and is a directory
+//  *
+//  * This will throw an error if the path exists and is not a directory
+//  *
+//  * @param {string} path Path to check
+//  * @return {boolean} true if it exists and is a directory, false if it doesn't exist
+//  */
+// FileHelpers.
+
+// /**
+//  * Ensures a path exists, and is a directory.
+//  *
+//  * Only works with one level of directory creation right now.
+//  *
+//  * This will throw an error if the directory could not be created.
+//  *
+//  * @param {string} path
+//  * @return {boolean} true if directory was newly created, false if it didn't need to be
+//  */
+// FileHelpers.ensureDirSync = function
+
+// module.exports = FileHelpers;

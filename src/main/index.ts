@@ -14,18 +14,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MenuItemConstructorOptions } from 'electron';
-
 // Modules to control application life and create native browser window
-const {
+import {
   app,
   BrowserWindow,
   Menu,
   ipcMain,
   nativeTheme,
-} = require('electron');
-const path = require('path');
-const isDev = require('electron-is-dev');
+  MenuItemConstructorOptions,
+} from 'electron';
+import path from 'path';
+import isDev from 'electron-is-dev';
 
 // eslint-disable-next-line no-console
 console.log('Starting ScriptCaddy');
@@ -39,7 +38,7 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    show: false,
+    show: true,
     webPreferences: {
       contextIsolation: true,
       // webSecurity: false,
@@ -94,7 +93,7 @@ function createWindow() {
   mainWindow.loadURL(
     isDev ?
       'http://localhost:3000' :
-      `file://${path.resolve(__dirname, '../../build/index.html')}`
+      `file://${path.resolve(__dirname, '../renderer/index.html')}`
   );
 
   ipcMain.on('toMain', (_event, args) => {

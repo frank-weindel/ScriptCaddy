@@ -104,13 +104,16 @@ class ScriptRunner {
     }
     const result = ShellExec.exec(this.runtimeDetails.path, ['-r', scriptHookPath, scriptPath, JSON.stringify(inputs)]);
     this._runningChildProcess = result.child;
+    if (!result.child.stdout) {
+      throw new Error('Missing stdout');
+    }
     result.child.stdout.on('data', data => {
       data.split('\n').forEach(item => {
         if (item !== '') {
           try {
             window.postMessage(JSON.parse(item), '*');
           } catch (e) {
-            window.postMessage({ evt: 'error', data: e });
+            window.postMessage({ evt: 'error', data: e }, '*');
           }
         }
       });
