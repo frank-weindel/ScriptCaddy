@@ -13,16 +13,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const os = require('os');
-const path = require('path');
-const {
+import os from 'os';
+import path from 'path';
+import {
   readFile,
   writeFile,
   readdir,
-} = require('../common/AsyncHelpers');
-const {
+} from '../common/AsyncHelpers';
+import {
   ensureDirSync,
-} = require('../common/FileHelpers');
+} from '../common/FileHelpers';
 
 const appHomeDir = path.join(os.homedir(), 'ScriptCaddy');
 const scriptDir = path.join(appHomeDir, 'My Scripts');
@@ -42,7 +42,7 @@ if (ensureDirSync(scriptDir)) {
   console.log('Created script directory');
 }
 
-class ScriptLister {
+export default class ScriptLister {
   /**
    * Return an array of javascript file names in the app_home
    *
@@ -74,5 +74,3 @@ class ScriptLister {
     return scriptDir;
   }
 }
-
-module.exports = ScriptLister;

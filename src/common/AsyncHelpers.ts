@@ -13,18 +13,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const fs = require('fs');
-const util = require('util');
-const childProcess = require('child_process');
+import fs from 'fs';
+import util from 'util';
+import childProcess from 'child_process';
 
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
-const execFile = util.promisify(childProcess.execFile);
-const readdir = util.promisify(fs.readdir);
-
-module.exports = {
-  readFile,
-  writeFile,
-  execFile,
-  readdir,
-};
+export const readFile = util.promisify(fs.readFile);
+export const writeFile = util.promisify(fs.writeFile);
+export const execFile = util.promisify(childProcess.execFile);
+/**
+ * Read a directory
+ */
+export const readdir = util.promisify(fs.readdir);

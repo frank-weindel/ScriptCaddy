@@ -13,30 +13,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const { execFile } = require('../common/AsyncHelpers');
+import { PromiseWithChild } from 'child_process';
+import { execFile } from '../common/AsyncHelpers';
 
-class ShellExec {
+export default class ShellExec {
   /**
    *
    * @param {string} file
    * @param {string[]} args
    */
   static exec(file, args) {
-    /**
-     * @type {import('child_process').PromiseWithChild<{stdout: string, stderr: string}>}
-     */
-    let execPromise;
+    let execPromise: PromiseWithChild<{stdout: string, stderr: string}>;
 
     /**
      * @return {Promise<string>}
      */
     async function runExec() {
-      let result;
+      let result: string;
       try {
         execPromise = execFile(file, args);
         result = (await execPromise).stdout;
       } catch (e) {
-        result = e.stack;
+        if (e instanceof Error) {
+          result = e.stack || 'No stack found';
+        }
+        result = 'Unknown error';
       }
       return result;
     }
@@ -50,5 +51,3 @@ class ShellExec {
     };
   }
 }
-
-module.exports = ShellExec;

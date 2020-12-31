@@ -13,9 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-const isDev = require('electron-is-dev');
-const path = require('path');
-const ShellExec = require('./ShellExec');
+import { ChildProcess } from 'child_process';
+import isDev from 'electron-is-dev';
+import path from 'path';
+import ShellExec from './ShellExec';
 
 const extraPath = isDev ? path.resolve(__dirname, '../../extra') : path.resolve(path.dirname(process.resourcesPath), 'extra');
 // eslint-disable-next-line no-console
@@ -27,7 +28,11 @@ console.log('extraPath: ', extraPath);
 
 const scriptHookPath = path.resolve(extraPath, 'scriptHook.js');
 
-class ScriptRunner {
+type RuntimeDetails = { path: string, version: string };
+
+export default class ScriptRunner {
+  runtimeDetails: false | RuntimeDetails
+
   async init(runtimePath) {
     // eslint-disable-next-line no-console
     console.log('Initializing script runner for platform: ', process.platform);
@@ -51,7 +56,7 @@ class ScriptRunner {
 
   static async tryDetectRuntime(path) {
     try {
-      const result = JSON.parse(
+      const result: { output: RuntimeDetails } = JSON.parse(
         await ShellExec.exec(
           path, ['-r', scriptHookPath, '-e', 'output = { path: process.argv[0], version: process.versions.node }', '{}']
         ).promise
@@ -72,7 +77,7 @@ class ScriptRunner {
       ],
     };
 
-    let candidateList;
+    let candidateList: string[];
     if (process.platform === 'win32') {
       candidateList = candidates.windows;
     } else {
@@ -80,11 +85,10 @@ class ScriptRunner {
     }
 
     // First try to detect it from the environment
-    let runtimeDetails;
-    runtimeDetails = await ScriptRunner.tryDetectRuntime('node');
+    let runtimeDetails = await ScriptRunner.tryDetectRuntime('node');
 
     // Then try each candidate for the platform, one at a time
-    while (!runtimeDetails) {
+    while (candidateList.length && !runtimeDetails) {
       // eslint-disable-next-line no-await-in-loop
       runtimeDetails = await ScriptRunner.tryDetectRuntime(candidateList.shift());
     }
@@ -93,14 +97,14 @@ class ScriptRunner {
     return runtimeDetails;
   }
 
-  /**
-   * @type {import('child_process').ChildProcess|null}
-   */
-  _runningChildProcess = null;
+  _runningChildProcess: ChildProcess | null = null;
 
   async runScript(scriptPath, inputs) {
     if (this._runningChildProcess) {
       throw new Error('Already running a process');
+    }
+    if (!this.runtimeDetails) {
+      throw new Error('Runtime was never detected');
     }
     const result = ShellExec.exec(this.runtimeDetails.path, ['-r', scriptHookPath, scriptPath, JSON.stringify(inputs)]);
     this._runningChildProcess = result.child;
@@ -129,5 +133,3 @@ class ScriptRunner {
     }
   }
 }
-
-module.exports = ScriptRunner;
