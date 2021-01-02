@@ -54,19 +54,19 @@ export default class ScriptLister {
       .map(file => file.name);
   }
 
-  static async loadScript(scriptName) {
+  static async loadScript(scriptName: string) {
     return readFile(this.getScriptPath(scriptName), 'utf8');
   }
 
-  static async newScript(scriptName) {
+  static async newScript(scriptName: string) {
     return writeFile(this.getScriptPath(scriptName), 'console.log("hello world");', 'utf8');
   }
 
-  static async saveScript(scriptName, content) {
+  static async saveScript(scriptName: string, content: string) {
     return writeFile(this.getScriptPath(scriptName), content, 'utf8');
   }
 
-  static getScriptPath(scriptName) {
+  static getScriptPath(scriptName: string) {
     return path.resolve(scriptDir, scriptName);
   }
 

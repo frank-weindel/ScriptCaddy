@@ -59,6 +59,6 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-curly-newline": "off",
-
+    "react/prop-types": "off"
   }
 }

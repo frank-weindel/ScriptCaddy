@@ -1,3 +1,5 @@
+import { MainApi, MyApi } from '../common/RendererApis';
+
 declare module "*.less" {
   const styles: { [key: string]: string };
   export default styles;
@@ -5,7 +7,7 @@ declare module "*.less" {
 
 interface Window {
   store: any;
-  api: any;
-  myAPI: any;
+  api: MainApi;
+  myAPI: MyApi;
   launchAbout: () => void;
 }

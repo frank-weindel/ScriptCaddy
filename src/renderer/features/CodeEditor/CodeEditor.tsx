@@ -14,7 +14,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AceEditor from 'react-ace';
 import LabelBar from '../../components/LabelBar/LabelBar';
@@ -30,7 +29,14 @@ import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/theme-github';
 import styles from './CodeEditor.module.less';
 
-class CodeEditor extends React.Component {
+type CodeEditorProps = {
+  aceTheme: string,
+  code: string,
+  consoleOutput: string,
+  setScriptContent: (string) => void,
+};
+
+class CodeEditor extends React.Component<CodeEditorProps> {
   static mapStateToProps(state) {
     return {
       code: state.scriptManager.scriptContent,
@@ -48,6 +54,8 @@ class CodeEditor extends React.Component {
     };
   }
 
+  consoleRef: React.RefObject<AceEditor>
+
   constructor(props) {
     super(props);
     this.onCodeChange = this.onCodeChange.bind(this);
@@ -57,8 +65,8 @@ class CodeEditor extends React.Component {
   componentDidUpdate(prevProps) {
     // Whenever console output changes, scroll the console down to the last line
     if (prevProps.consoleOutput !== this.props.consoleOutput) {
-      const numLines = this.consoleRef.current.editor.session.doc.getAllLines().length;
-      this.consoleRef.current.editor.gotoLine(numLines);
+      const numLines = this.consoleRef.current?.editor.session.getDocument().getAllLines().length || 0;
+      this.consoleRef.current?.editor.gotoLine(numLines, 0, false);
     }
   }
 
@@ -95,13 +103,6 @@ class CodeEditor extends React.Component {
     );
   }
 }
-
-CodeEditor.propTypes = {
-  aceTheme: PropTypes.string.isRequired,
-  code: PropTypes.string.isRequired,
-  consoleOutput: PropTypes.string.isRequired,
-  setScriptContent: PropTypes.func.isRequired,
-};
 
 export default connect(
   CodeEditor.mapStateToProps,
