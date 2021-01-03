@@ -37,7 +37,7 @@ export default class ScriptRunner {
     this.runtimeDetails = false;
   }
 
-  async init(runtimePath: string) {
+  async init(runtimePath: string | undefined) {
     // eslint-disable-next-line no-console
     console.log('Initializing script runner for platform: ', process.platform);
     if (runtimePath) {
