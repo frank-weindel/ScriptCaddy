@@ -28,6 +28,7 @@ import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/theme-github';
 import styles from './CodeEditor.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
 type CodeEditorProps = {
   aceTheme: string,
@@ -37,7 +38,7 @@ type CodeEditorProps = {
 };
 
 class CodeEditor extends React.Component<CodeEditorProps> {
-  static mapStateToProps(state) {
+  static mapStateToProps(state: AppState) {
     return {
       code: state.scriptManager.scriptContent,
       scriptName: state.scriptManager.openedScriptName,
@@ -46,7 +47,7 @@ class CodeEditor extends React.Component<CodeEditorProps> {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
       openScript: scriptName => dispatch(openScript(scriptName)),
       setScriptContent: content => dispatch(setScriptContent(content)),

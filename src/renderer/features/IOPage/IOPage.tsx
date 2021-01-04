@@ -15,7 +15,6 @@
  */
 import React from 'react';
 import AceEditor from 'react-ace';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
@@ -25,9 +24,18 @@ import {
   getOutputById,
 } from '../../slices/scriptManager';
 import styles from './IOPage.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
-class IOPage extends React.Component {
-  static mapStateToProps(state) {
+type IOPageProps = {
+  aceTheme: string,
+  setInput: (inputId: number, value: string) => void,
+  input1: string,
+  input2: string,
+  output1: string,
+};
+
+class IOPage extends React.Component<IOPageProps> {
+  static mapStateToProps(state: AppState) {
     return {
       input1: getInputById(state, 1),
       input2: getInputById(state, 2),
@@ -36,7 +44,7 @@ class IOPage extends React.Component {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
       setInput: (inputId, value) => dispatch(setInput({ inputId, value })),
       setOutput: (outputId, value) => dispatch(setOutput({ outputId, value })),
@@ -80,14 +88,6 @@ class IOPage extends React.Component {
     );
   }
 }
-
-IOPage.propTypes = {
-  aceTheme: PropTypes.string.isRequired,
-  setInput: PropTypes.func.isRequired,
-  input1: PropTypes.string.isRequired,
-  input2: PropTypes.string.isRequired,
-  output1: PropTypes.string.isRequired,
-};
 
 export default connect(
   IOPage.mapStateToProps,

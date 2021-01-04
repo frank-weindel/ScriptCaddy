@@ -14,16 +14,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   resolveModal,
-  MODAL_TYPES,
+  ModalType,
+  ModalResult,
 } from '../../slices/modal';
 import styles from './Modal.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
-class Modal extends React.Component {
-  static mapStateToProps(state) {
+type ModalProps = {
+  resolveModal: (result: ModalResult) => void,
+  isOpen: boolean,
+  type: ModalType,
+  data: AppState['modal']['data']
+};
+
+class Modal extends React.Component<ModalProps> {
+  static mapStateToProps(state: AppState) {
     return {
       isOpen: state.modal.isOpen,
       type: state.modal.type,
@@ -31,11 +39,13 @@ class Modal extends React.Component {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
       resolveModal: result => dispatch(resolveModal(result)),
     };
   }
+
+  inputRef: React.RefObject<HTMLInputElement>
 
   constructor(props) {
     super(props);
@@ -69,7 +79,7 @@ class Modal extends React.Component {
   }
 
   onOk() {
-    this.props.resolveModal(this.inputRef.current.value);
+    this.props.resolveModal(this.inputRef.current?.value || '');
   }
 
   onYes() {
@@ -88,7 +98,7 @@ class Modal extends React.Component {
     const { type } = this.props;
 
     let buttons;
-    if (type === MODAL_TYPES.PROMPT) {
+    if (type === ModalType.PROMPT) {
       buttons = (
         <form>
           <input ref={this.inputRef} type="text" />
@@ -96,7 +106,7 @@ class Modal extends React.Component {
           <button type="button" onClick={this.onCancel}>Cancel</button>
         </form>
       );
-    } else if (type === MODAL_TYPES.CONFIRM) {
+    } else if (type === ModalType.CONFIRM) {
       buttons = (
         <form>
           <button type="submit" onClick={this.onYes}>Yes</button>
@@ -123,15 +133,6 @@ class Modal extends React.Component {
     );
   }
 }
-
-Modal.propTypes = {
-  resolveModal: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  type: PropTypes.bool.isRequired,
-  data: PropTypes.shape({
-    message: PropTypes.func.isRequired,
-  }).isRequired,
-};
 
 export default connect(
   Modal.mapStateToProps,

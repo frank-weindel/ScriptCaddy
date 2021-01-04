@@ -15,12 +15,14 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 
-export const MODAL_TYPES = {
-  PROMPT: 'PROMPT',
-  CONFIRM: 'CONFIRM',
-};
+export enum ModalType {
+  PROMPT = 'PROMPT',
+  CONFIRM = 'CONFIRM',
+}
 
-let modalResolve = null;
+export type ModalResult = boolean | null | string;
+
+let modalResolve: null | ((value: string | boolean | PromiseLike<ModalResult> | null) => void) = null;
 
 export const modal = createSlice({
   name: 'modal',
@@ -52,8 +54,8 @@ export default modal.reducer;
 
 export function promptModal(message) {
   return async dispatch => {
-    dispatch(openModal({ type: MODAL_TYPES.PROMPT, data: { message } }));
-    return new Promise(resolve => {
+    dispatch(openModal({ type: ModalType.PROMPT, data: { message } }));
+    return new Promise<ModalResult>(resolve => {
       modalResolve = resolve;
     });
   };
@@ -61,14 +63,14 @@ export function promptModal(message) {
 
 export function confirmModal(message) {
   return async dispatch => {
-    dispatch(openModal({ type: MODAL_TYPES.CONFIRM, data: { message } }));
-    return new Promise(resolve => {
+    dispatch(openModal({ type: ModalType.CONFIRM, data: { message } }));
+    return new Promise<ModalResult>(resolve => {
       modalResolve = resolve;
     });
   };
 }
 
-export function resolveModal(result) {
+export function resolveModal(result: ModalResult) {
   return dispatch => {
     dispatch(closeModal());
     if (modalResolve) {
