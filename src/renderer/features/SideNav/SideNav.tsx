@@ -14,7 +14,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import styles from './SideNav.module.less';
@@ -25,7 +24,15 @@ import {
   openScriptFileManager,
 } from '../../slices/scriptManager';
 
-class SideNav extends React.Component {
+type SideNavProps = {
+  openedScriptName: string,
+  scripts: string[],
+  openScript: (scriptName: string) => void,
+  newScript: () => void,
+  openScriptFileManager: (scriptName: string) => void,
+}
+
+class SideNav extends React.Component<SideNavProps> {
   static mapStateToProps(state) {
     return {
       scripts: selectScripts(state),
@@ -81,14 +88,6 @@ class SideNav extends React.Component {
     );
   }
 }
-
-SideNav.propTypes = {
-  openedScriptName: PropTypes.string.isRequired,
-  scripts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  openScript: PropTypes.func.isRequired,
-  newScript: PropTypes.func.isRequired,
-  openScriptFileManager: PropTypes.func.isRequired,
-};
 
 export default connect(
   SideNav.mapStateToProps,

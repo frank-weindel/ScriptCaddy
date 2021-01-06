@@ -13,7 +13,7 @@
     "outDir": "tsc-build"
   },
   "files": [
-    "./index.js",
+    "./index.tsx",
     "./types.d.ts"
   ],
   "exclude": [
