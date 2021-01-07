@@ -14,6 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { createSlice } from '@reduxjs/toolkit';
+import type { AppDispatch } from '../app/store';
 
 export enum ModalType {
   PROMPT = 'PROMPT',
@@ -24,6 +25,14 @@ export type ModalResult = boolean | null | string;
 
 let modalResolve: null | ((value: string | boolean | PromiseLike<ModalResult> | null) => void) = null;
 
+type ModalState = {
+  isOpen: boolean,
+  type?: ModalType,
+  data: {
+    message: string
+  }
+}
+
 export const modal = createSlice({
   name: 'modal',
   initialState: {
@@ -32,7 +41,7 @@ export const modal = createSlice({
     data: {
       message: '',
     },
-  },
+  } as ModalState,
   reducers: {
     openModal(state, action) {
       state.isOpen = true;
@@ -52,8 +61,8 @@ export const { openModal, closeModal } = modal.actions;
 
 export default modal.reducer;
 
-export function promptModal(message) {
-  return async dispatch => {
+export function promptModal(message: string) {
+  return async (dispatch: AppDispatch) => {
     dispatch(openModal({ type: ModalType.PROMPT, data: { message } }));
     return new Promise<ModalResult>(resolve => {
       modalResolve = resolve;
@@ -61,8 +70,8 @@ export function promptModal(message) {
   };
 }
 
-export function confirmModal(message) {
-  return async dispatch => {
+export function confirmModal(message: string) {
+  return async (dispatch: AppDispatch) => {
     dispatch(openModal({ type: ModalType.CONFIRM, data: { message } }));
     return new Promise<ModalResult>(resolve => {
       modalResolve = resolve;
@@ -71,7 +80,7 @@ export function confirmModal(message) {
 }
 
 export function resolveModal(result: ModalResult) {
-  return dispatch => {
+  return (dispatch: AppDispatch) => {
     dispatch(closeModal());
     if (modalResolve) {
       modalResolve(result);

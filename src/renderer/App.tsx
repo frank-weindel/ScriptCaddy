@@ -16,7 +16,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 // import logo from './logo.svg';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import classNames from 'classnames';
 import SideNav from './features/SideNav/SideNav';
 import IOPage from './features/IOPage/IOPage';
@@ -31,24 +31,18 @@ import {
   saveScript,
   stopScript,
 } from './slices/scriptManager';
+import {
+  AppDispatch,
+  AppState,
+} from './app/store';
 
 window.api.receive('fromMain', data => {
   // eslint-disable-next-line no-console
   console.log(`Received ${data} from main process`);
 });
 
-type AppProps = {
-  selectedTab: string,
-  scriptRunning: boolean,
-  codeDirty: boolean,
-  selectTab: (string) => void,
-  runScript: () => void,
-  saveScript: () => void,
-  stopScript: () => void,
-};
-
 class App extends React.Component<AppProps> {
-  static mapStateToProps(state) {
+  static mapStateToProps(state: AppState) {
     return {
       selectedTab: state.app.selectedTab,
       scriptRunning: state.scriptManager.running,
@@ -56,21 +50,21 @@ class App extends React.Component<AppProps> {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
-      selectTab: tab => dispatch(selectTab(tab)),
+      selectTab: (tab: string) => dispatch(selectTab(tab)),
       runScript: () => dispatch(runScript()),
       saveScript: () => dispatch(saveScript()),
       stopScript: () => dispatch(stopScript()),
     };
   }
 
-  constructor(props, context) {
-    super(props, context);
+  constructor(props: AppProps) {
+    super(props);
     this.onClickTab = this.onClickTab.bind(this);
   }
 
-  async onClickTab(e) {
+  async onClickTab(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     const { id } = e.currentTarget.dataset;
     if (id === 'run') {
       await this.props.saveScript();
@@ -80,7 +74,7 @@ class App extends React.Component<AppProps> {
     } else if (id === 'save') {
       await this.props.saveScript();
     } else {
-      this.props.selectTab(e.currentTarget.dataset.id);
+      this.props.selectTab(e.currentTarget.dataset.id || '');
     }
   }
 
@@ -139,7 +133,11 @@ class App extends React.Component<AppProps> {
   }
 }
 
-export default connect(
+const connector = connect(
   App.mapStateToProps,
   App.mapDispatchToProps
-)(App);
+);
+
+type AppProps = ConnectedProps<typeof connector>;
+
+export default connector(App);

@@ -22,7 +22,7 @@ export interface MainApi {
 
 export interface MyApi {
   init(runtimePath?: string): Promise<boolean>;
-  runScript: (scriptName: string, inputs: string) => Promise<string>,
+  runScript: (scriptName: string, inputs: Record<string, string>) => Promise<string>,
   stopScript: () => Promise<void>,
   saveScript: (scriptName: string, content: string) => Promise<void>,
   getScriptList: () => Promise<string[]>,

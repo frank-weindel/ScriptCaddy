@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import {
   resolveModal,
   ModalType,
@@ -22,13 +22,6 @@ import {
 } from '../../slices/modal';
 import styles from './Modal.module.less';
 import { AppDispatch, AppState } from '../../app/store';
-
-type ModalProps = {
-  resolveModal: (result: ModalResult) => void,
-  isOpen: boolean,
-  type: ModalType,
-  data: AppState['modal']['data']
-};
 
 class Modal extends React.Component<ModalProps> {
   static mapStateToProps(state: AppState) {
@@ -41,13 +34,13 @@ class Modal extends React.Component<ModalProps> {
 
   static mapDispatchToProps(dispatch: AppDispatch) {
     return {
-      resolveModal: result => dispatch(resolveModal(result)),
+      resolveModal: (result: ModalResult) => dispatch(resolveModal(result)),
     };
   }
 
   inputRef: React.RefObject<HTMLInputElement>
 
-  constructor(props) {
+  constructor(props: ModalProps) {
     super(props);
     this.onOk = this.onOk.bind(this);
     this.onYes = this.onYes.bind(this);
@@ -61,7 +54,7 @@ class Modal extends React.Component<ModalProps> {
     document.addEventListener('keydown', this.onKeyPress, false);
   }
 
-  componentDidUpdate(prevProps, _prevState, _snapshot) {
+  componentDidUpdate(prevProps: ModalProps) {
     // When modal is opening. Focus on the text box.
     if (!prevProps.isOpen && this.props.isOpen && this.inputRef.current) {
       this.inputRef.current.focus();
@@ -72,7 +65,7 @@ class Modal extends React.Component<ModalProps> {
     document.removeEventListener('keydown', this.onKeyPress, false);
   }
 
-  onKeyPress(e) {
+  onKeyPress(e: KeyboardEvent) {
     if (e.key === 'Escape' && this.props.isOpen) {
       this.onCancel();
     }
@@ -134,7 +127,11 @@ class Modal extends React.Component<ModalProps> {
   }
 }
 
-export default connect(
+const connector = connect(
   Modal.mapStateToProps,
   Modal.mapDispatchToProps
-)(Modal);
+);
+
+type ModalProps = ConnectedProps<typeof connector>;
+
+export default connector(Modal);

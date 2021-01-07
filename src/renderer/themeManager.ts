@@ -10,7 +10,7 @@ class ThemeManager {
     ];
   }
 
-  setTheme(theme) {
+  setTheme(theme: string) {
     let oldLinkEl;
     if (this._linkEl) {
       oldLinkEl = this._linkEl;

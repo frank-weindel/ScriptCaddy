@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import AceEditor from 'react-ace';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
   setInput,
@@ -26,31 +26,23 @@ import {
 import styles from './IOPage.module.less';
 import { AppDispatch, AppState } from '../../app/store';
 
-type IOPageProps = {
-  aceTheme: string,
-  setInput: (inputId: number, value: string) => void,
-  input1: string,
-  input2: string,
-  output1: string,
-};
+function mapStateToProps(state: AppState) {
+  return {
+    input1: getInputById(state, 1),
+    input2: getInputById(state, 2),
+    output1: getOutputById(state, 1),
+    aceTheme: state.theme.aceTheme,
+  };
+}
+
+function mapDispatchToProps(dispatch: AppDispatch) {
+  return {
+    setInput: (inputId: number, value: string) => dispatch(setInput({ inputId, value })),
+    setOutput: (outputId: number, value: string) => dispatch(setOutput({ outputId, value })),
+  };
+}
 
 class IOPage extends React.Component<IOPageProps> {
-  static mapStateToProps(state: AppState) {
-    return {
-      input1: getInputById(state, 1),
-      input2: getInputById(state, 2),
-      output1: getOutputById(state, 1),
-      aceTheme: state.theme.aceTheme,
-    };
-  }
-
-  static mapDispatchToProps(dispatch: AppDispatch) {
-    return {
-      setInput: (inputId, value) => dispatch(setInput({ inputId, value })),
-      setOutput: (outputId, value) => dispatch(setOutput({ outputId, value })),
-    };
-  }
-
   render() {
     return (
       <div className={styles.IOPage}>
@@ -89,7 +81,11 @@ class IOPage extends React.Component<IOPageProps> {
   }
 }
 
-export default connect(
-  IOPage.mapStateToProps,
-  IOPage.mapDispatchToProps
-)(IOPage);
+const connector = connect(
+  mapStateToProps,
+  mapDispatchToProps
+);
+
+type IOPageProps = ConnectedProps<typeof connector>;
+
+export default connector(IOPage);
