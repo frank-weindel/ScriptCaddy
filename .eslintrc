@@ -35,7 +35,7 @@
         "ts": "never",
         "tsx": "never"
       }
-   ],
+    ],
     "max-len": ["error", { "code": 140 }],
     "no-param-reassign": ["error", { "props": false }],
     "no-restricted-syntax": [

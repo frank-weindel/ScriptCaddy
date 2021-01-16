@@ -23,7 +23,7 @@ import {
   refreshScripts,
   consoleLog,
   consoleLogRaw,
-  setOutput,
+  setIOValue,
 } from './slices/scriptManager';
 import { confirmModal } from './slices/modal';
 import { setThemeVars } from './slices/theme';
@@ -40,13 +40,26 @@ import './index.less';
   window.addEventListener('message', event => {
     if (event.data.evt === 'update') {
       store.dispatch(refreshScripts());
+    } else if (event.data.evt === 'error') {
+      store.dispatch(consoleLog(event.data));
     } else if (event.data.evt === 'stdout' || event.data.evt === 'stderr') {
       store.dispatch(consoleLogRaw(event.data.data));
     } else if (event.data.evt === 'final') {
+      const outputs = event.data.outputs;
+      const outputIds = Object.keys(event.data.outputs);
       store.dispatch(consoleLog(JSON.stringify(event.data)));
-      store.dispatch(
-        setOutput({ outputId: 1, value: typeof event.data.output === 'object' ? JSON.stringify(event.data.output) : event.data.output })
-      );
+      outputIds.forEach(id => {
+        store.dispatch(
+          setIOValue({
+            element: {
+              type: 'output',
+              label: '',
+              id,
+            },
+            value: outputs[id],
+          })
+        );
+      });
     }
   }, false);
 

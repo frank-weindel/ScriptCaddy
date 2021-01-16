@@ -13,13 +13,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AppDispatch, AppState } from '../app/store';
 import { promptModal, confirmModal } from './modal';
 
+type IOElement = {
+  type: 'input' | 'output',
+  label: string,
+  id: string | number,
+};
+
+type IOConfig = IOElement[];
+
+export type IOFieldSetValue = {
+  element: IOElement,
+  value: string
+};
+
 type ScriptData = {
-  inputs: Record<string, string>,
-  outputs: Record<string, string>
+  inputs: Record<string | number, string>,
+  outputs: Record<string | number, string>,
+  consoleOutput: string,
+  ioConfigText: string,
+  ioConfig: IOConfig
 };
 
 type ScriptManagerState = {
@@ -33,6 +49,26 @@ type ScriptManagerState = {
   scripts: string[],
   data: Record<string, ScriptData>,
 }
+
+const tempIOConfig = `
+[
+  {
+    "type": "input",
+    "label": "Input 1",
+    "id": 1
+  },
+  {
+    "type": "input",
+    "label": "Input 2",
+    "id": "myInput"
+  },
+  {
+    "type": "output",
+    "label": "Output 1",
+    "id": "default"
+  }
+]
+`;
 
 export const scriptManager = createSlice({
   name: 'scriptManager',
@@ -66,6 +102,9 @@ export const scriptManager = createSlice({
         state.data[action.payload.name] = {
           inputs: {},
           outputs: {},
+          consoleOutput: '',
+          ioConfigText: tempIOConfig,
+          ioConfig: JSON.parse(tempIOConfig),
         };
       }
     },
@@ -87,16 +126,34 @@ export const scriptManager = createSlice({
       state.scriptContent = action.payload;
       state.dirty = state.lastSaveScriptContent !== action.payload;
     },
-    setInput: (state, action) => {
-      state.data[state.openedScriptName].inputs[action.payload.inputId] = action.payload.value;
+    setIOValue: (state, action: PayloadAction<IOFieldSetValue>) => {
+      const element = action.payload.element;
+      if (element.type === 'input') {
+        state.data[state.openedScriptName].inputs[element.id] = action.payload.value;
+      } else {
+        state.data[state.openedScriptName].outputs[element.id] = action.payload.value;
+      }
     },
-    setOutput: (state, action) => {
-      state.data[state.openedScriptName].outputs[action.payload.outputId] = action.payload.value;
+    setIOConfig: (state, action) => {
+      state.data[state.openedScriptName].ioConfigText = action.payload.value;
+      try {
+        state.data[state.openedScriptName].ioConfig = JSON.parse(action.payload.value);
+      } catch (e) {
+        // Do nothing
+      }
     },
   },
 });
 
 export const selectScripts = (state: AppState) => state.scriptManager.scripts;
+
+export const getInputs = (state: AppState) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.inputs || {}
+);
+
+export const getOutputs = (state: AppState) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.outputs || {}
+);
 
 export const getInputById = (state: AppState, inputId: number) => (
   state.scriptManager.data[state.scriptManager.openedScriptName]?.inputs?.[inputId] || ''
@@ -104,6 +161,14 @@ export const getInputById = (state: AppState, inputId: number) => (
 
 export const getOutputById = (state: AppState, outputId: number) => (
   state.scriptManager.data[state.scriptManager.openedScriptName]?.outputs?.[outputId] || ''
+);
+
+export const getIOConfigText = (state: AppState) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.ioConfigText || ''
+);
+
+export const getIOConfig = (state: AppState) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.ioConfig || ''
 );
 
 const {
@@ -117,8 +182,8 @@ const {
 
 export const {
   setScriptContent,
-  setInput,
-  setOutput,
+  setIOValue,
+  setIOConfig,
   consoleLog,
   consoleLogRaw,
 } = scriptManager.actions;

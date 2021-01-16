@@ -18,35 +18,57 @@ import AceEditor from 'react-ace';
 import { connect, ConnectedProps } from 'react-redux';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
-  setInput,
-  setOutput,
-  getInputById,
-  getOutputById,
+  setIOValue,
+  getInputs,
+  getOutputs,
+  getIOConfig,
+  IOFieldSetValue,
 } from '../../slices/scriptManager';
 import styles from './IOPage.module.less';
 import { AppDispatch, AppState } from '../../app/store';
 
 function mapStateToProps(state: AppState) {
+  // const ioConfig =
   return {
-    input1: getInputById(state, 1),
-    input2: getInputById(state, 2),
-    output1: getOutputById(state, 1),
+    ioConfig: getIOConfig(state),
+    inputs: getInputs(state),
+    outputs: getOutputs(state),
     aceTheme: state.theme.aceTheme,
   };
 }
 
 function mapDispatchToProps(dispatch: AppDispatch) {
   return {
-    setInput: (inputId: number, value: string) => dispatch(setInput({ inputId, value })),
-    setOutput: (outputId: number, value: string) => dispatch(setOutput({ outputId, value })),
+    setIOValue: (value: IOFieldSetValue) => dispatch(setIOValue(value)),
   };
 }
 
 class IOPage extends React.Component<IOPageProps> {
   render() {
+    const {
+      inputs,
+      outputs,
+      setIOValue,
+    } = this.props;
     return (
       <div className={styles.IOPage}>
-        <LabelBar>Input 1</LabelBar>
+        {this.props.ioConfig.map(element => (
+          <React.Fragment key={`${element.type}_${element.id}`}>
+            <LabelBar>{element.label}</LabelBar>
+            <AceEditor
+              mode="text"
+              theme={this.props.aceTheme}
+              width="100%"
+              height="100%"
+              value={element.type === 'input' ? inputs[element.id] : outputs[element.id]}
+              readOnly={element.type === 'output'}
+              onChange={value => setIOValue({ element, value })}
+              setOptions={{ useWorker: false }}
+            />
+          </React.Fragment>
+        ))}
+
+        {/* <LabelBar>Input 1</LabelBar>
         <AceEditor
           mode="text"
           theme={this.props.aceTheme}
@@ -75,7 +97,7 @@ class IOPage extends React.Component<IOPageProps> {
           readOnly
           value={this.props.output1}
           setOptions={{ useWorker: false }}
-        />
+        /> */}
       </div>
     );
   }
