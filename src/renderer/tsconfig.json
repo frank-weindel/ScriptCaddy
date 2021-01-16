@@ -6,14 +6,14 @@
     "moduleResolution": "node",
     "checkJs": true,
     "allowJs": true,
-    "strictNullChecks": true,
+    "strict": true,
     "jsx": "react",
     "esModuleInterop": true,
     "newLine": "lf",
     "outDir": "tsc-build"
   },
   "files": [
-    "./index.js",
+    "./index.tsx",
     "./types.d.ts"
   ],
   "exclude": [

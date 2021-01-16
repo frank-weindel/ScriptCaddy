@@ -81,7 +81,9 @@ import './index.less';
       aceTheme: computedStyles.getPropertyValue('--ace-theme').trim(),
     };
     store.dispatch(setThemeVars(vars));
-    window.api.send('toMain', { msg: 'onThemeChange', themeSource: vars.themeSource });
+    if (vars.themeSource === 'dark' || vars.themeSource === 'light') {
+      window.api.send('toMain', { msg: 'onThemeChange', themeSource: vars.themeSource });
+    }
   };
 
   window.api.send('toMain', { msg: 'onInitComplete' });

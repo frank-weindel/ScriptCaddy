@@ -14,8 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import classNames from 'classnames';
 import styles from './SideNav.module.less';
 import {
@@ -24,24 +23,25 @@ import {
   newScript,
   openScriptFileManager,
 } from '../../slices/scriptManager';
+import { AppDispatch, AppState } from '../../app/store';
 
-class SideNav extends React.Component {
-  static mapStateToProps(state) {
+class SideNav extends React.Component<SideNavProps> {
+  static mapStateToProps(state: AppState) {
     return {
       scripts: selectScripts(state),
       openedScriptName: state.scriptManager.openedScriptName,
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
-      openScript: scriptName => dispatch(openScript(scriptName)),
+      openScript: (scriptName: string) => dispatch(openScript(scriptName)),
       newScript: () => dispatch(newScript()),
-      openScriptFileManager: scriptName => dispatch(openScriptFileManager(scriptName)),
+      openScriptFileManager: (scriptName: string) => dispatch(openScriptFileManager(scriptName)),
     };
   }
 
-  constructor(props, context) {
+  constructor(props: SideNavProps, context: string) {
     super(props, context);
     this.onClickAdd = this.onClickAdd.bind(this);
   }
@@ -54,7 +54,7 @@ class SideNav extends React.Component {
     const {
       scripts, openedScriptName, openScript, openScriptFileManager,
     } = this.props;
-    const list = scripts.map(script => ({
+    const list = scripts.map((script: string) => ({
       title: script,
       subtitle: '',
     }));
@@ -82,15 +82,11 @@ class SideNav extends React.Component {
   }
 }
 
-SideNav.propTypes = {
-  openedScriptName: PropTypes.string.isRequired,
-  scripts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  openScript: PropTypes.func.isRequired,
-  newScript: PropTypes.func.isRequired,
-  openScriptFileManager: PropTypes.func.isRequired,
-};
-
-export default connect(
+const connector = connect(
   SideNav.mapStateToProps,
   SideNav.mapDispatchToProps
-)(SideNav);
+);
+
+type SideNavProps = ConnectedProps<typeof connector>;
+
+export default connector(SideNav);

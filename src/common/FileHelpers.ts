@@ -13,10 +13,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 import fs from 'fs';
 
-export function dirExistsSync(path) {
+/**
+ * Check if a path exists and is a directory
+ *
+ * This will throw an error if the path exists and is not a directory
+ *
+ * @param {string} path Path to check
+ * @return {boolean} true if it exists and is a directory, false if it doesn't exist
+ */
+export function dirExistsSync(path: string) {
   try {
     if (fs.statSync(path).isDirectory()) {
       return true;
@@ -33,34 +40,20 @@ export function dirExistsSync(path) {
   throw new Error(`Path exists but isn't a directory: ${path}`);
 }
 
-export function ensureDirSync(path) {
+/**
+ * Ensures a path exists, and is a directory.
+ *
+ * Only works with one level of directory creation right now.
+ *
+ * This will throw an error if the directory could not be created.
+ *
+ * @param {string} path
+ * @return {boolean} true if directory was newly created, false if it didn't need to be
+ */
+export function ensureDirSync(path: string) {
   if (dirExistsSync(path)) {
     return false;
   }
   fs.mkdirSync(path);
   return true;
 }
-
-// /**
-//  * Check if a path exists and is a directory
-//  *
-//  * This will throw an error if the path exists and is not a directory
-//  *
-//  * @param {string} path Path to check
-//  * @return {boolean} true if it exists and is a directory, false if it doesn't exist
-//  */
-// FileHelpers.
-
-// /**
-//  * Ensures a path exists, and is a directory.
-//  *
-//  * Only works with one level of directory creation right now.
-//  *
-//  * This will throw an error if the directory could not be created.
-//  *
-//  * @param {string} path
-//  * @return {boolean} true if directory was newly created, false if it didn't need to be
-//  */
-// FileHelpers.ensureDirSync = function
-
-// module.exports = FileHelpers;

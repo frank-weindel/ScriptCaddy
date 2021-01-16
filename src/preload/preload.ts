@@ -20,6 +20,10 @@ import {
 } from 'electron';
 import watch from 'node-watch';
 
+import {
+  MainApi,
+  MyApi,
+} from '../common/RendererApis';
 import ScriptLister from './ScriptLister';
 import ScriptRunner from './ScriptRunner';
 
@@ -36,7 +40,7 @@ const scriptRunner = new ScriptRunner();
   });
 })();
 
-contextBridge.exposeInMainWorld('myAPI', {
+contextBridge.exposeInMainWorld<MyApi>('myAPI', {
   init: async runtimePath => {
     return scriptRunner.init(runtimePath);
   },
@@ -60,10 +64,6 @@ contextBridge.exposeInMainWorld('myAPI', {
   newScript: async scriptName => {
     return ScriptLister.newScript(scriptName);
   },
-  eval: code => {
-    // eslint-disable-next-line no-eval
-    return eval(code);
-  },
   openScriptFileManager: scriptName => {
     const scriptPath = ScriptLister.getScriptPath(scriptName);
     shell.showItemInFolder(scriptPath);
@@ -75,7 +75,7 @@ contextBridge.exposeInMainWorld('myAPI', {
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
-contextBridge.exposeInMainWorld(
+contextBridge.exposeInMainWorld<MainApi>(
   'api', {
     send: (channel, data) => {
       // whitelist channels

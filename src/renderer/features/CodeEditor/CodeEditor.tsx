@@ -14,8 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import AceEditor from 'react-ace';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
@@ -29,9 +28,10 @@ import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/theme-github';
 import styles from './CodeEditor.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
-class CodeEditor extends React.Component {
-  static mapStateToProps(state) {
+class CodeEditor extends React.Component<CodeEditorProps> {
+  static mapStateToProps(state: AppState) {
     return {
       code: state.scriptManager.scriptContent,
       scriptName: state.scriptManager.openedScriptName,
@@ -40,29 +40,31 @@ class CodeEditor extends React.Component {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
-      openScript: scriptName => dispatch(openScript(scriptName)),
-      setScriptContent: content => dispatch(setScriptContent(content)),
+      openScript: (scriptName: string) => dispatch(openScript(scriptName)),
+      setScriptContent: (content: string) => dispatch(setScriptContent(content)),
       saveScript: () => dispatch(saveScript()),
     };
   }
 
-  constructor(props) {
+  consoleRef: React.RefObject<AceEditor>
+
+  constructor(props: CodeEditorProps) {
     super(props);
     this.onCodeChange = this.onCodeChange.bind(this);
     this.consoleRef = React.createRef();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: CodeEditorProps) {
     // Whenever console output changes, scroll the console down to the last line
     if (prevProps.consoleOutput !== this.props.consoleOutput) {
-      const numLines = this.consoleRef.current.editor.session.doc.getAllLines().length;
-      this.consoleRef.current.editor.gotoLine(numLines);
+      const numLines = this.consoleRef.current?.editor.session.getDocument().getAllLines().length || 0;
+      this.consoleRef.current?.editor.gotoLine(numLines, 0, false);
     }
   }
 
-  onCodeChange(code) {
+  onCodeChange(code: string) {
     this.props.setScriptContent(code);
   }
 
@@ -96,14 +98,11 @@ class CodeEditor extends React.Component {
   }
 }
 
-CodeEditor.propTypes = {
-  aceTheme: PropTypes.string.isRequired,
-  code: PropTypes.string.isRequired,
-  consoleOutput: PropTypes.string.isRequired,
-  setScriptContent: PropTypes.func.isRequired,
-};
-
-export default connect(
+const connector = connect(
   CodeEditor.mapStateToProps,
   CodeEditor.mapDispatchToProps
-)(CodeEditor);
+);
+
+type CodeEditorProps = ConnectedProps<typeof connector>;
+
+export default connector(CodeEditor);
