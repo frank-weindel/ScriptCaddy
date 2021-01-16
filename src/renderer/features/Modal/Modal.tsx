@@ -14,16 +14,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import {
   resolveModal,
-  MODAL_TYPES,
+  ModalType,
+  ModalResult,
 } from '../../slices/modal';
 import styles from './Modal.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
-class Modal extends React.Component {
-  static mapStateToProps(state) {
+class Modal extends React.Component<ModalProps> {
+  static mapStateToProps(state: AppState) {
     return {
       isOpen: state.modal.isOpen,
       type: state.modal.type,
@@ -31,13 +32,15 @@ class Modal extends React.Component {
     };
   }
 
-  static mapDispatchToProps(dispatch) {
+  static mapDispatchToProps(dispatch: AppDispatch) {
     return {
-      resolveModal: result => dispatch(resolveModal(result)),
+      resolveModal: (result: ModalResult) => dispatch(resolveModal(result)),
     };
   }
 
-  constructor(props) {
+  inputRef: React.RefObject<HTMLInputElement>
+
+  constructor(props: ModalProps) {
     super(props);
     this.onOk = this.onOk.bind(this);
     this.onYes = this.onYes.bind(this);
@@ -51,7 +54,7 @@ class Modal extends React.Component {
     document.addEventListener('keydown', this.onKeyPress, false);
   }
 
-  componentDidUpdate(prevProps, _prevState, _snapshot) {
+  componentDidUpdate(prevProps: ModalProps) {
     // When modal is opening. Focus on the text box.
     if (!prevProps.isOpen && this.props.isOpen && this.inputRef.current) {
       this.inputRef.current.focus();
@@ -62,14 +65,14 @@ class Modal extends React.Component {
     document.removeEventListener('keydown', this.onKeyPress, false);
   }
 
-  onKeyPress(e) {
+  onKeyPress(e: KeyboardEvent) {
     if (e.key === 'Escape' && this.props.isOpen) {
       this.onCancel();
     }
   }
 
   onOk() {
-    this.props.resolveModal(this.inputRef.current.value);
+    this.props.resolveModal(this.inputRef.current?.value || '');
   }
 
   onYes() {
@@ -88,7 +91,7 @@ class Modal extends React.Component {
     const { type } = this.props;
 
     let buttons;
-    if (type === MODAL_TYPES.PROMPT) {
+    if (type === ModalType.PROMPT) {
       buttons = (
         <form>
           <input ref={this.inputRef} type="text" />
@@ -96,7 +99,7 @@ class Modal extends React.Component {
           <button type="button" onClick={this.onCancel}>Cancel</button>
         </form>
       );
-    } else if (type === MODAL_TYPES.CONFIRM) {
+    } else if (type === ModalType.CONFIRM) {
       buttons = (
         <form>
           <button type="submit" onClick={this.onYes}>Yes</button>
@@ -124,16 +127,11 @@ class Modal extends React.Component {
   }
 }
 
-Modal.propTypes = {
-  resolveModal: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  type: PropTypes.bool.isRequired,
-  data: PropTypes.shape({
-    message: PropTypes.func.isRequired,
-  }).isRequired,
-};
-
-export default connect(
+const connector = connect(
   Modal.mapStateToProps,
   Modal.mapDispatchToProps
-)(Modal);
+);
+
+type ModalProps = ConnectedProps<typeof connector>;
+
+export default connector(Modal);

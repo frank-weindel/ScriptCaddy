@@ -25,6 +25,7 @@ import {
 } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
+import { Message } from '../common/RendererApis';
 
 // eslint-disable-next-line no-console
 console.log('Starting ScriptCaddy');
@@ -96,7 +97,7 @@ function createWindow() {
       `file://${path.resolve(__dirname, '../renderer/index.html')}`
   );
 
-  ipcMain.on('toMain', (_event, args) => {
+  ipcMain.on('toMain', (_event, args: Message) => {
     if (args.msg === 'onInitComplete') {
       // Initialize the theme and then show the window finally
       mainWindow.webContents.send('setTheme', 'dark');

@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "checkJs": true,
     "allowJs": true,
+    "strict": true,
     "strictNullChecks": true,
     "jsx": "react",
     "outDir": "./build",
@@ -13,7 +14,8 @@
   },
   "files": [
     "./src/main/index.ts",
-    "./src/preload/preload.ts"
+    "./src/preload/preload.ts",
+    "./src/globalTypes.d.ts"
   ],
   "exclude": [
     "node_modules",

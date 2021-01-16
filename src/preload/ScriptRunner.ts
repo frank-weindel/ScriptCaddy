@@ -33,7 +33,11 @@ type RuntimeDetails = { path: string, version: string };
 export default class ScriptRunner {
   runtimeDetails: false | RuntimeDetails
 
-  async init(runtimePath) {
+  constructor() {
+    this.runtimeDetails = false;
+  }
+
+  async init(runtimePath: string | undefined) {
     // eslint-disable-next-line no-console
     console.log('Initializing script runner for platform: ', process.platform);
     if (runtimePath) {
@@ -54,7 +58,7 @@ export default class ScriptRunner {
     return false;
   }
 
-  static async tryDetectRuntime(path) {
+  static async tryDetectRuntime(path: string) {
     try {
       const result: { output: RuntimeDetails } = JSON.parse(
         await ShellExec.exec(
@@ -89,8 +93,9 @@ export default class ScriptRunner {
 
     // Then try each candidate for the platform, one at a time
     while (candidateList.length && !runtimeDetails) {
+      const candidate = candidateList.shift();
       // eslint-disable-next-line no-await-in-loop
-      runtimeDetails = await ScriptRunner.tryDetectRuntime(candidateList.shift());
+      runtimeDetails = candidate ? await ScriptRunner.tryDetectRuntime(candidate) : false;
     }
 
     // If we can't find it then we likely failed
@@ -99,7 +104,7 @@ export default class ScriptRunner {
 
   _runningChildProcess: ChildProcess | null = null;
 
-  async runScript(scriptPath, inputs) {
+  async runScript(scriptPath: string, inputs: any) {
     if (this._runningChildProcess) {
       throw new Error('Already running a process');
     }
@@ -112,7 +117,7 @@ export default class ScriptRunner {
       throw new Error('Missing stdout');
     }
     result.child.stdout.on('data', data => {
-      data.split('\n').forEach(item => {
+      data.split('\n').forEach((item: string) => {
         if (item !== '') {
           try {
             window.postMessage(JSON.parse(item), '*');

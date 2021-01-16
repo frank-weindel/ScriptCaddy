@@ -4,8 +4,8 @@ declare module "*.less" {
 }
 
 interface Window {
-  store: any;
-  api: any;
-  myAPI: any;
+  store: typeof import("./app/store").default;
+  api: import("../common/RendererApis").MainApi;
+  myAPI: import("../common/RendererApis").MyApi;
   launchAbout: () => void;
 }

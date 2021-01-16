@@ -14,7 +14,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { createSlice } from '@reduxjs/toolkit';
+import type { AppDispatch, AppState } from '../app/store';
 import { promptModal, confirmModal } from './modal';
+
+type ScriptData = {
+  inputs: Record<string, string>,
+  outputs: Record<string, string>
+};
+
+type ScriptManagerState = {
+  saving: boolean,
+  running: boolean,
+  dirty: boolean,
+  openedScriptName: string,
+  scriptContent: string,
+  lastSaveScriptContent: string,
+  consoleOutput: string,
+  scripts: string[],
+  data: Record<string, ScriptData>,
+}
 
 export const scriptManager = createSlice({
   name: 'scriptManager',
@@ -28,7 +46,7 @@ export const scriptManager = createSlice({
     consoleOutput: '',
     scripts: [],
     data: {},
-  },
+  } as ScriptManagerState,
   reducers: {
     _runningScript: state => {
       state.running = true;
@@ -78,11 +96,15 @@ export const scriptManager = createSlice({
   },
 });
 
-export const selectScripts = state => state.scriptManager.scripts;
+export const selectScripts = (state: AppState) => state.scriptManager.scripts;
 
-export const getInputById = (state, inputId) => state.scriptManager.data[state.scriptManager.openedScriptName]?.inputs?.[inputId] || '';
+export const getInputById = (state: AppState, inputId: number) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.inputs?.[inputId] || ''
+);
 
-export const getOutputById = (state, outputId) => state.scriptManager.data[state.scriptManager.openedScriptName]?.outputs?.[outputId] || '';
+export const getOutputById = (state: AppState, outputId: number) => (
+  state.scriptManager.data[state.scriptManager.openedScriptName]?.outputs?.[outputId] || ''
+);
 
 const {
   _runningScript,
@@ -101,8 +123,8 @@ export const {
   consoleLogRaw,
 } = scriptManager.actions;
 
-export function openScript(scriptName) {
-  return async (dispatch, getState) => {
+export function openScript(scriptName: string) {
+  return async (dispatch: AppDispatch, getState: () => AppState) => {
     const state = getState();
     if (state.scriptManager.dirty) {
       const result = await dispatch(confirmModal('Script not saved. Do you want to save your changes?'));
@@ -122,7 +144,7 @@ export function openScript(scriptName) {
 }
 
 export function runScript() {
-  return async (dispatch, getState) => {
+  return async (dispatch: AppDispatch, getState: () => AppState) => {
     const state = getState();
     dispatch(_runningScript());
     dispatch(consoleLog('Running...'));
@@ -138,13 +160,13 @@ export function runScript() {
 }
 
 export function stopScript() {
-  return async (_dispatch, _getState) => {
+  return async () => {
     await window.myAPI.stopScript();
   };
 }
 
 export function saveScript() {
-  return async (dispatch, getState) => {
+  return async (dispatch: AppDispatch, getState: () => AppState) => {
     const state = getState();
     dispatch(_savingScript());
     await window.myAPI.saveScript(state.scriptManager.openedScriptName, state.scriptManager.scriptContent);
@@ -153,7 +175,7 @@ export function saveScript() {
 }
 
 export function refreshScripts() {
-  return async (dispatch, getState) => {
+  return async (dispatch: AppDispatch, getState: () => AppState) => {
     const scriptList = await window.myAPI.getScriptList();
     await dispatch(_setScripts(scriptList));
     const openedScriptName = getState().scriptManager.openedScriptName;
@@ -166,9 +188,9 @@ export function refreshScripts() {
 }
 
 export function newScript() {
-  return async (dispatch, _getState) => {
+  return async (dispatch: AppDispatch) => {
     const fileName = await dispatch(promptModal('What would you like to call this file?'));
-    if (!fileName) {
+    if (!fileName || fileName === true) {
       return;
     }
     await window.myAPI.newScript(fileName);
@@ -177,8 +199,8 @@ export function newScript() {
   };
 }
 
-export function openScriptFileManager(scriptName) {
-  return async (_dispatch, _getState) => {
+export function openScriptFileManager(scriptName: string) {
+  return async () => {
     await window.myAPI.openScriptFileManager(scriptName);
   };
 }

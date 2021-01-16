@@ -22,7 +22,7 @@ export default class ShellExec {
    * @param {string} file
    * @param {string[]} args
    */
-  static exec(file, args) {
+  static exec(file: string, args: string[]) {
     let execPromise: PromiseWithChild<{stdout: string, stderr: string}>;
 
     /**

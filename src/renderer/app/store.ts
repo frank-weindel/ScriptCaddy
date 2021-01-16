@@ -19,7 +19,7 @@ import modalReducer from '../slices/modal';
 import scriptManagerReducer from '../slices/scriptManager';
 import themeReducer from '../slices/theme';
 
-export default configureStore({
+const store = configureStore({
   reducer: {
     app: appReducer,
     scriptManager: scriptManagerReducer,
@@ -27,3 +27,7 @@ export default configureStore({
     theme: themeReducer,
   },
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type AppState = ReturnType<typeof store.getState>;
+export default store;

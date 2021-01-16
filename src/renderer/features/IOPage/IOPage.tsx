@@ -15,8 +15,7 @@
  */
 import React from 'react';
 import AceEditor from 'react-ace';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
   setInput,
@@ -25,24 +24,25 @@ import {
   getOutputById,
 } from '../../slices/scriptManager';
 import styles from './IOPage.module.less';
+import { AppDispatch, AppState } from '../../app/store';
 
-class IOPage extends React.Component {
-  static mapStateToProps(state) {
-    return {
-      input1: getInputById(state, 1),
-      input2: getInputById(state, 2),
-      output1: getOutputById(state, 1),
-      aceTheme: state.theme.aceTheme,
-    };
-  }
+function mapStateToProps(state: AppState) {
+  return {
+    input1: getInputById(state, 1),
+    input2: getInputById(state, 2),
+    output1: getOutputById(state, 1),
+    aceTheme: state.theme.aceTheme,
+  };
+}
 
-  static mapDispatchToProps(dispatch) {
-    return {
-      setInput: (inputId, value) => dispatch(setInput({ inputId, value })),
-      setOutput: (outputId, value) => dispatch(setOutput({ outputId, value })),
-    };
-  }
+function mapDispatchToProps(dispatch: AppDispatch) {
+  return {
+    setInput: (inputId: number, value: string) => dispatch(setInput({ inputId, value })),
+    setOutput: (outputId: number, value: string) => dispatch(setOutput({ outputId, value })),
+  };
+}
 
+class IOPage extends React.Component<IOPageProps> {
   render() {
     return (
       <div className={styles.IOPage}>
@@ -81,15 +81,11 @@ class IOPage extends React.Component {
   }
 }
 
-IOPage.propTypes = {
-  aceTheme: PropTypes.string.isRequired,
-  setInput: PropTypes.func.isRequired,
-  input1: PropTypes.string.isRequired,
-  input2: PropTypes.string.isRequired,
-  output1: PropTypes.string.isRequired,
-};
+const connector = connect(
+  mapStateToProps,
+  mapDispatchToProps
+);
 
-export default connect(
-  IOPage.mapStateToProps,
-  IOPage.mapDispatchToProps
-)(IOPage);
+type IOPageProps = ConnectedProps<typeof connector>;
+
+export default connector(IOPage);
