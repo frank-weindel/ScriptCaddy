@@ -18,22 +18,22 @@ import AceEditor from 'react-ace';
 import { connect, ConnectedProps } from 'react-redux';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
-  setIOConfig,
-  getIOConfigText,
+  setScriptConfigBody,
+  getScriptConfigBody,
 } from '../../slices/scriptManager';
 import styles from './IOConfigPage.module.less';
 import { AppDispatch, AppState } from '../../app/store';
 
 function mapStateToProps(state: AppState) {
   return {
-    ioConfig: getIOConfigText(state),
+    ioConfig: getScriptConfigBody(state),
     aceTheme: state.theme.aceTheme,
   };
 }
 
 function mapDispatchToProps(dispatch: AppDispatch) {
   return {
-    setIOConfig: (value: string) => dispatch(setIOConfig({ value })),
+    setIOConfig: (value: string) => dispatch(setScriptConfigBody(value)),
   };
 }
 

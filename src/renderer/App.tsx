@@ -47,7 +47,9 @@ class App extends React.Component<AppProps> {
     return {
       selectedTab: state.app.selectedTab,
       scriptRunning: state.scriptManager.running,
-      codeDirty: state.scriptManager.dirty,
+      codeDirty: state.scriptManager.scriptBodyDirty,
+      configDirty: state.scriptManager.scriptConfigBodyDirty,
+      configError: state.scriptManager.scriptConfigError,
     };
   }
 
@@ -82,6 +84,8 @@ class App extends React.Component<AppProps> {
   render() {
     const {
       codeDirty,
+      configDirty,
+      configError,
       selectedTab,
       scriptRunning,
     } = this.props;
@@ -109,12 +113,17 @@ class App extends React.Component<AppProps> {
               I/O
             </button>
             <button
-              className={classNames(styles.tab, { [styles.activeTab]: selectedTab === 'io-config' })}
+              className={classNames(
+                styles.tab, {
+                  [styles.activeTab]: selectedTab === 'io-config',
+                  [styles.error]: configError,
+                }
+              )}
               type="button"
               data-id="io-config"
               onClick={this.onClickTab}
             >
-              I/O Config
+              I/O Config{configDirty ? '*' : ''}
             </button>
             <button
               className={styles.save}

@@ -34,51 +34,39 @@ type ScriptData = {
   inputs: Record<string | number, string>,
   outputs: Record<string | number, string>,
   consoleOutput: string,
-  ioConfigText: string,
-  ioConfig: IOConfig
 };
 
 type ScriptManagerState = {
   saving: boolean,
   running: boolean,
-  dirty: boolean,
+  scriptBodyDirty: boolean,
+  scriptConfigBodyDirty: boolean,
   openedScriptName: string,
-  scriptContent: string,
-  lastSaveScriptContent: string,
+  scriptBody: string,
+  scriptConfigBody: string,
+  scriptConfig: IOConfig,
+  scriptConfigError: string | null,
+  lastSaveScriptBody: string,
+  lastSaveScriptConfigBody: string,
   consoleOutput: string,
   scripts: string[],
   data: Record<string, ScriptData>,
 }
-
-const tempIOConfig = `
-[
-  {
-    "type": "input",
-    "label": "Input 1",
-    "id": 1
-  },
-  {
-    "type": "input",
-    "label": "Input 2",
-    "id": "myInput"
-  },
-  {
-    "type": "output",
-    "label": "Output 1",
-    "id": "default"
-  }
-]
-`;
 
 export const scriptManager = createSlice({
   name: 'scriptManager',
   initialState: {
     saving: false,
     running: false,
-    dirty: false,
+    scriptBodyDirty: false,
+    scriptConfigBodyDirty: false,
     openedScriptName: '',
-    scriptContent: '',
-    lastSaveScriptContent: '',
+    scriptBody: '',
+    scriptConfigBody: '',
+    scriptConfig: [],
+    scriptConfigError: null,
+    lastSaveScriptBody: '',
+    lastSaveScriptConfigBody: '',
     consoleOutput: '',
     scripts: [],
     data: {},
@@ -93,18 +81,16 @@ export const scriptManager = createSlice({
     _setScripts: (state, action) => {
       state.scripts = action.payload;
     },
-    _setScript: (state, action) => {
+    _initScript: (state, action: PayloadAction<{name: string, scriptBody: string, scriptConfigBody: string}>) => {
       state.openedScriptName = action.payload.name;
-      state.scriptContent = action.payload.content;
-      state.lastSaveScriptContent = action.payload.content;
-      state.dirty = false;
+      state.lastSaveScriptBody = action.payload.scriptBody;
+      state.lastSaveScriptConfigBody = action.payload.scriptConfigBody;
+
       if (!state.data[action.payload.name]) {
         state.data[action.payload.name] = {
           inputs: {},
           outputs: {},
           consoleOutput: '',
-          ioConfigText: tempIOConfig,
-          ioConfig: JSON.parse(tempIOConfig),
         };
       }
     },
@@ -112,9 +98,11 @@ export const scriptManager = createSlice({
       state.saving = true;
     },
     _savedScript: state => {
-      state.lastSaveScriptContent = state.scriptContent;
-      state.saving = true;
-      state.dirty = false;
+      state.saving = false;
+      state.lastSaveScriptBody = state.scriptBody;
+      state.scriptBodyDirty = false;
+      state.lastSaveScriptConfigBody = state.scriptConfigBody;
+      state.scriptConfigBodyDirty = false;
     },
     consoleLog: (state, action) => {
       state.consoleOutput += `${action.payload}\n`;
@@ -122,9 +110,9 @@ export const scriptManager = createSlice({
     consoleLogRaw: (state, action) => {
       state.consoleOutput += `${action.payload}`;
     },
-    setScriptContent: (state, action) => {
-      state.scriptContent = action.payload;
-      state.dirty = state.lastSaveScriptContent !== action.payload;
+    setScriptBody: (state, action) => {
+      state.scriptBody = action.payload;
+      state.scriptBodyDirty = state.lastSaveScriptBody !== action.payload;
     },
     setIOValue: (state, action: PayloadAction<IOFieldSetValue>) => {
       const element = action.payload.element;
@@ -134,16 +122,25 @@ export const scriptManager = createSlice({
         state.data[state.openedScriptName].outputs[element.id] = action.payload.value;
       }
     },
-    setIOConfig: (state, action) => {
-      state.data[state.openedScriptName].ioConfigText = action.payload.value;
+    setScriptConfigBody: (state, action: PayloadAction<string>) => {
+      state.scriptConfigBody = action.payload;
+      state.scriptConfigBodyDirty = state.lastSaveScriptConfigBody !== action.payload;
       try {
-        state.data[state.openedScriptName].ioConfig = JSON.parse(action.payload.value);
+        state.scriptConfig = JSON.parse(action.payload);
+        state.scriptConfigError = null;
       } catch (e) {
-        // Do nothing
+        if (e instanceof Error) {
+          state.scriptConfigError = e.message;
+        } else {
+          state.scriptConfigError = `Unknown error: ${e.toString()}`;
+        }
+        state.scriptConfig = [];
       }
     },
   },
 });
+
+export const isScriptDirty = (state: AppState) => state.scriptManager.scriptBodyDirty || state.scriptManager.scriptConfigBodyDirty;
 
 export const selectScripts = (state: AppState) => state.scriptManager.scripts;
 
@@ -163,27 +160,27 @@ export const getOutputById = (state: AppState, outputId: number) => (
   state.scriptManager.data[state.scriptManager.openedScriptName]?.outputs?.[outputId] || ''
 );
 
-export const getIOConfigText = (state: AppState) => (
-  state.scriptManager.data[state.scriptManager.openedScriptName]?.ioConfigText || ''
+export const getScriptConfigBody = (state: AppState) => (
+  state.scriptManager.scriptConfigBody || ''
 );
 
-export const getIOConfig = (state: AppState) => (
-  state.scriptManager.data[state.scriptManager.openedScriptName]?.ioConfig || ''
+export const getScriptConfig = (state: AppState) => (
+  state.scriptManager.scriptConfig || ''
 );
 
 const {
   _runningScript,
   _ranScript,
   _setScripts,
-  _setScript,
+  _initScript,
   _savingScript,
   _savedScript,
 } = scriptManager.actions;
 
 export const {
-  setScriptContent,
+  setScriptBody,
   setIOValue,
-  setIOConfig,
+  setScriptConfigBody,
   consoleLog,
   consoleLogRaw,
 } = scriptManager.actions;
@@ -191,7 +188,7 @@ export const {
 export function openScript(scriptName: string) {
   return async (dispatch: AppDispatch, getState: () => AppState) => {
     const state = getState();
-    if (state.scriptManager.dirty) {
+    if (isScriptDirty(state)) {
       const result = await dispatch(confirmModal('Script not saved. Do you want to save your changes?'));
       if (result) {
         await dispatch(saveScript());
@@ -201,10 +198,15 @@ export function openScript(scriptName: string) {
       }
     }
 
-    dispatch(_setScript({
+    const scrip = await window.myAPI.getScript(scriptName);
+
+    dispatch(_initScript({
       name: scriptName,
-      content: await window.myAPI.getScript(scriptName),
+      scriptBody: scrip.scriptBody,
+      scriptConfigBody: scrip.scriptConfigBody,
     }));
+    dispatch(setScriptBody(scrip.scriptBody));
+    dispatch(setScriptConfigBody(scrip.scriptConfigBody));
   };
 }
 
@@ -234,7 +236,11 @@ export function saveScript() {
   return async (dispatch: AppDispatch, getState: () => AppState) => {
     const state = getState();
     dispatch(_savingScript());
-    await window.myAPI.saveScript(state.scriptManager.openedScriptName, state.scriptManager.scriptContent);
+    const ioConfig = getScriptConfigBody(state);
+    await window.myAPI.saveScript(state.scriptManager.openedScriptName, {
+      scriptBody: state.scriptManager.scriptBody,
+      scriptConfigBody: ioConfig,
+    });
     dispatch(_savedScript());
   };
 }

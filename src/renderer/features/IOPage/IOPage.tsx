@@ -21,7 +21,7 @@ import {
   setIOValue,
   getInputs,
   getOutputs,
-  getIOConfig,
+  getScriptConfig,
   IOFieldSetValue,
 } from '../../slices/scriptManager';
 import styles from './IOPage.module.less';
@@ -30,7 +30,7 @@ import { AppDispatch, AppState } from '../../app/store';
 function mapStateToProps(state: AppState) {
   // const ioConfig =
   return {
-    ioConfig: getIOConfig(state),
+    ioConfig: getScriptConfig(state),
     inputs: getInputs(state),
     outputs: getOutputs(state),
     aceTheme: state.theme.aceTheme,

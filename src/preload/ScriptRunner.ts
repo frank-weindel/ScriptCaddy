@@ -63,7 +63,6 @@ export default class ScriptRunner {
       const abc = await ShellExec.exec(
         path, ['-r', scriptHookPath, '-e', 'outputs.path = process.argv[0]; outputs.version = process.versions.node', '{}']
       ).promise;
-      console.log('abc', abc);
       const result: { outputs: RuntimeDetails } = JSON.parse(
         abc
       );
