@@ -18,7 +18,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import AceEditor from 'react-ace';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
-  setScriptContent,
+  setScriptBody,
   openScript,
   saveScript,
 } from '../../slices/scriptManager';
@@ -33,7 +33,7 @@ import { AppDispatch, AppState } from '../../app/store';
 class CodeEditor extends React.Component<CodeEditorProps> {
   static mapStateToProps(state: AppState) {
     return {
-      code: state.scriptManager.scriptContent,
+      code: state.scriptManager.scriptBody,
       scriptName: state.scriptManager.openedScriptName,
       consoleOutput: state.scriptManager.consoleOutput,
       aceTheme: state.theme.aceTheme,
@@ -43,7 +43,7 @@ class CodeEditor extends React.Component<CodeEditorProps> {
   static mapDispatchToProps(dispatch: AppDispatch) {
     return {
       openScript: (scriptName: string) => dispatch(openScript(scriptName)),
-      setScriptContent: (content: string) => dispatch(setScriptContent(content)),
+      setScriptContent: (content: string) => dispatch(setScriptBody(content)),
       saveScript: () => dispatch(saveScript()),
     };
   }

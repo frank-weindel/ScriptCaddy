@@ -60,12 +60,13 @@ export default class ScriptRunner {
 
   static async tryDetectRuntime(path: string) {
     try {
-      const result: { output: RuntimeDetails } = JSON.parse(
-        await ShellExec.exec(
-          path, ['-r', scriptHookPath, '-e', 'output = { path: process.argv[0], version: process.versions.node }', '{}']
-        ).promise
+      const abc = await ShellExec.exec(
+        path, ['-r', scriptHookPath, '-e', 'outputs.path = process.argv[0]; outputs.version = process.versions.node', '{}']
+      ).promise;
+      const result: { outputs: RuntimeDetails } = JSON.parse(
+        abc
       );
-      return result.output;
+      return result.outputs;
     } catch (e) {
       return false;
     }
@@ -104,7 +105,7 @@ export default class ScriptRunner {
 
   _runningChildProcess: ChildProcess | null = null;
 
-  async runScript(scriptPath: string, inputs: any) {
+  async runScript(scriptPath: string, inputs: Record<string | number, string>) {
     if (this._runningChildProcess) {
       throw new Error('Already running a process');
     }

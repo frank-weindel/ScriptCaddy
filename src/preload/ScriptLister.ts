@@ -23,6 +23,8 @@ import {
 import {
   ensureDirSync,
 } from '../common/FileHelpers';
+import { Scrip } from '../common/types';
+import JavascriptParser from './parsers/JavascriptParser';
 
 const appHomeDir = path.join(os.homedir(), 'ScriptCaddy');
 const scriptDir = path.join(appHomeDir, 'My Scripts');
@@ -42,6 +44,8 @@ if (ensureDirSync(scriptDir)) {
   console.log('Created script directory');
 }
 
+const parser = new JavascriptParser();
+
 export default class ScriptLister {
   /**
    * Return an array of javascript file names in the app_home
@@ -54,16 +58,31 @@ export default class ScriptLister {
       .map(file => file.name);
   }
 
-  static async loadScript(scriptName: string) {
-    return readFile(this.getScriptPath(scriptName), 'utf8');
+  static async loadScript(scriptName: string): Promise<Scrip> {
+    const fileContents = await readFile(this.getScriptPath(scriptName), 'utf8');
+    return parser.parse(fileContents);
   }
 
   static async newScript(scriptName: string) {
-    return writeFile(this.getScriptPath(scriptName), 'console.log("hello world");', 'utf8');
+    return writeFile(this.getScriptPath(scriptName), parser.compose({
+      scriptBody: 'console.log("hello world");',
+      scriptConfigBody: JSON.stringify([
+        {
+          type: 'input',
+          label: 'Input',
+          id: 'default',
+        },
+        {
+          type: 'output',
+          label: 'Output 1',
+          id: 'default',
+        },
+      ], null, 2),
+    }), 'utf8');
   }
 
-  static async saveScript(scriptName: string, content: string) {
-    return writeFile(this.getScriptPath(scriptName), content, 'utf8');
+  static async saveScript(scriptName: string, scrip: Scrip) {
+    return writeFile(this.getScriptPath(scriptName), parser.compose(scrip), 'utf8');
   }
 
   static getScriptPath(scriptName: string) {

@@ -20,6 +20,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import classNames from 'classnames';
 import SideNav from './features/SideNav/SideNav';
 import IOPage from './features/IOPage/IOPage';
+import IOConfigPage from './features/IOConfigPage/IOConfigPage';
 import Modal from './features/Modal/Modal';
 import CodeEditor from './features/CodeEditor/CodeEditor';
 import styles from './App.modules.less';
@@ -46,7 +47,9 @@ class App extends React.Component<AppProps> {
     return {
       selectedTab: state.app.selectedTab,
       scriptRunning: state.scriptManager.running,
-      codeDirty: state.scriptManager.dirty,
+      codeDirty: state.scriptManager.scriptBodyDirty,
+      configDirty: state.scriptManager.scriptConfigBodyDirty,
+      configError: state.scriptManager.scriptConfigError,
     };
   }
 
@@ -81,6 +84,8 @@ class App extends React.Component<AppProps> {
   render() {
     const {
       codeDirty,
+      configDirty,
+      configError,
       selectedTab,
       scriptRunning,
     } = this.props;
@@ -108,6 +113,19 @@ class App extends React.Component<AppProps> {
               I/O
             </button>
             <button
+              className={classNames(
+                styles.tab, {
+                  [styles.activeTab]: selectedTab === 'io-config',
+                  [styles.error]: configError,
+                }
+              )}
+              type="button"
+              data-id="io-config"
+              onClick={this.onClickTab}
+            >
+              I/O Config{configDirty ? '*' : ''}
+            </button>
+            <button
               className={styles.save}
               type="button"
               data-id="save"
@@ -126,6 +144,7 @@ class App extends React.Component<AppProps> {
           </div>
           {selectedTab === 'code' && <CodeEditor />}
           {selectedTab === 'io' && <IOPage />}
+          {selectedTab === 'io-config' && <IOConfigPage />}
         </div>
         <Modal />
       </div>

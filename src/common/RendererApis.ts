@@ -3,6 +3,7 @@ import {
   IpcRendererEvent,
   NativeTheme,
 } from 'electron';
+import { Scrip } from './types';
 
 interface OnThemeChangeMessage {
   msg: 'onThemeChange',
@@ -24,9 +25,9 @@ export interface MyApi {
   init(runtimePath?: string): Promise<boolean>;
   runScript: (scriptName: string, inputs: Record<string, string>) => Promise<string>,
   stopScript: () => Promise<void>,
-  saveScript: (scriptName: string, content: string) => Promise<void>,
+  saveScript: (scriptName: string, scrip: Scrip) => Promise<void>,
   getScriptList: () => Promise<string[]>,
-  getScript: (scriptName: string) => Promise<string>,
+  getScript: (scriptName: string) => Promise<Scrip>,
   newScript: (scriptName: string) => Promise<void>,
   openScriptFileManager: (scriptName: string) => void,
   on: (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) => IpcRenderer
