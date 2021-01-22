@@ -36,6 +36,38 @@ class OutputCapture extends Writable {
   }
 }
 
+// Establish the global inputs and outputs
+// global.inputs = JSON.parse(process.argv[2] || process.argv[1]);
+// global.outputs = {};
+
+Object.defineProperty(global, 'inputs', {
+  value: JSON.parse(process.argv[2] || process.argv[1]),
+  writable: false,
+});
+
+Object.defineProperty(global, 'outputs', {
+  value: {},
+  writable: false,
+});
+
+Object.defineProperty(global, 'input', {
+  get() {
+    return global.inputs.default;
+  },
+  set(v) {
+    global.inputs.default = v;
+  },
+});
+
+Object.defineProperty(global, 'output', {
+  get() {
+    return global.outputs.default;
+  },
+  set(v) {
+    global.outputs.default = v;
+  },
+});
+
 const stdoutCapture = new OutputCapture('stdout');
 const stderrCapture = new OutputCapture('stderr');
 
@@ -43,14 +75,10 @@ const stderrCapture = new OutputCapture('stderr');
 process.stdout.write = stdoutCapture.write.bind(stdoutCapture);
 process.stderr.write = stderrCapture.write.bind(stderrCapture);
 
-// Establish the global output
-global.inputs = JSON.parse(process.argv[2] || process.argv[1]);
-global.output = null;
-
 // Write out captured output on exit
 process.on('exit', () => {
   ogStdoutWrite(`${JSON.stringify({
     evt: 'final',
-    output: global.output,
+    outputs: global.outputs,
   })}\n`);
 });

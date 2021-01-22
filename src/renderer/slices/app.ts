@@ -15,7 +15,7 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 
-export const app = createSlice({
+const app = createSlice({
   name: 'app',
   initialState: {
     selectedTab: 'code',

@@ -54,9 +54,6 @@ export const modal = createSlice({
   },
 });
 
-// const {
-// } = modal.actions;
-
 export const { openModal, closeModal } = modal.actions;
 
 export default modal.reducer;
