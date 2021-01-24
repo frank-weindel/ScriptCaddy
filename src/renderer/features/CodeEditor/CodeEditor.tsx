@@ -17,6 +17,7 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import AceEditor from 'react-ace';
 import LabelBar from '../../components/LabelBar/LabelBar';
+import ResizablePane from '../../components/ResizablePane/ResizablePane';
 import {
   setScriptBody,
   openScript,
@@ -82,17 +83,19 @@ class CodeEditor extends React.Component<CodeEditorProps> {
           value={code}
           setOptions={{ useWorker: false }}
         />
-        <LabelBar>Console</LabelBar>
-        <AceEditor
-          mode="text"
-          theme={aceTheme}
-          width="100%"
-          height="100%"
-          readOnly
-          value={consoleOutput}
-          setOptions={{ useWorker: false }}
-          ref={this.consoleRef}
-        />
+        <ResizablePane>
+          <LabelBar>Console</LabelBar>
+          <AceEditor
+            mode="text"
+            theme={aceTheme}
+            width="100%"
+            height="100%"
+            readOnly
+            value={consoleOutput}
+            setOptions={{ useWorker: false }}
+            ref={this.consoleRef}
+          />
+        </ResizablePane>
       </div>
     );
   }
