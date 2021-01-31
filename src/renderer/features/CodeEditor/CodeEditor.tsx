@@ -15,9 +15,11 @@
  */
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import AceEditor from 'react-ace';
 import LabelBar from '../../components/LabelBar/LabelBar';
+import ResizableAceEditor from '../../components/ResizableAceEditor/ResizableAceEditor';
 import ResizablePane from '../../components/ResizablePane/ResizablePane';
+import ResizableLayout from '../../components/ResizableLayout/ResizableLayout';
+
 import {
   setScriptBody,
   openScript,
@@ -49,7 +51,7 @@ class CodeEditor extends React.Component<CodeEditorProps> {
     };
   }
 
-  consoleRef: React.RefObject<AceEditor>
+  consoleRef: React.RefObject<ResizableAceEditor>
 
   constructor(props: CodeEditorProps) {
     super(props);
@@ -60,8 +62,8 @@ class CodeEditor extends React.Component<CodeEditorProps> {
   componentDidUpdate(prevProps: CodeEditorProps) {
     // Whenever console output changes, scroll the console down to the last line
     if (prevProps.consoleOutput !== this.props.consoleOutput) {
-      const numLines = this.consoleRef.current?.editor.session.getDocument().getAllLines().length || 0;
-      this.consoleRef.current?.editor.gotoLine(numLines, 0, false);
+      const numLines = this.consoleRef.current?.editor?.session.getDocument().getAllLines().length || 0;
+      this.consoleRef.current?.editor?.gotoLine(numLines, 0, false);
     }
   }
 
@@ -74,28 +76,32 @@ class CodeEditor extends React.Component<CodeEditorProps> {
 
     return (
       <div className={styles.CodeEditor}>
-        <AceEditor
-          mode="javascript"
-          theme={aceTheme}
-          width="100%"
-          height="100%"
-          onChange={this.onCodeChange}
-          value={code}
-          setOptions={{ useWorker: false }}
-        />
-        <ResizablePane>
-          <LabelBar>Console</LabelBar>
-          <AceEditor
-            mode="text"
-            theme={aceTheme}
-            width="100%"
-            height="100%"
-            readOnly
-            value={consoleOutput}
-            setOptions={{ useWorker: false }}
-            ref={this.consoleRef}
-          />
-        </ResizablePane>
+        <ResizableLayout>
+          <ResizablePane>
+            <ResizableAceEditor
+              mode="javascript"
+              theme={aceTheme}
+              width="100%"
+              height="100%"
+              onChange={this.onCodeChange}
+              value={code}
+              setOptions={{ useWorker: false }}
+            />
+          </ResizablePane>
+          <ResizablePane>
+            <LabelBar>Console</LabelBar>
+            <ResizableAceEditor
+              mode="text"
+              theme={aceTheme}
+              width="100%"
+              height="100%"
+              readOnly
+              value={consoleOutput}
+              setOptions={{ useWorker: false }}
+              ref={this.consoleRef}
+            />
+          </ResizablePane>
+        </ResizableLayout>
       </div>
     );
   }
