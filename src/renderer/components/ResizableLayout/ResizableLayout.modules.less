@@ -1,0 +1,33 @@
+/**
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+  position: relative;
+  */
+
+.ResizableLayout {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.child {
+  height: 100%;
+}
+
+.GrabberWrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.grabber {
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  // background-color: green;
+  cursor: ns-resize;
+  z-index: 99999;
+}

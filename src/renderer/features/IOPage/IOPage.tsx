@@ -26,6 +26,8 @@ import {
 } from '../../slices/scriptManager';
 import styles from './IOPage.module.less';
 import { AppDispatch, AppState } from '../../app/store';
+import ResizableLayout from '../../components/ResizableLayout/ResizableLayout';
+import ResizablePane from '../../components/ResizablePane/ResizablePane';
 
 function mapStateToProps(state: AppState) {
   // const ioConfig =
@@ -52,52 +54,23 @@ class IOPage extends React.Component<IOPageProps> {
     } = this.props;
     return (
       <div className={styles.IOPage}>
-        {this.props.ioConfig.map(element => (
-          <React.Fragment key={`${element.type}_${element.id}`}>
-            <LabelBar>{element.label}</LabelBar>
-            <AceEditor
-              mode="text"
-              theme={this.props.aceTheme}
-              width="100%"
-              height="100%"
-              value={element.type === 'input' ? inputs[element.id] : outputs[element.id]}
-              readOnly={element.type === 'output'}
-              onChange={value => setIOValue({ element, value })}
-              setOptions={{ useWorker: false }}
-            />
-          </React.Fragment>
-        ))}
-
-        {/* <LabelBar>Input 1</LabelBar>
-        <AceEditor
-          mode="text"
-          theme={this.props.aceTheme}
-          width="100%"
-          height="100%"
-          value={this.props.input1}
-          onChange={e => this.props.setInput(1, e)}
-          setOptions={{ useWorker: false }}
-        />
-        <LabelBar>Input 2</LabelBar>
-        <AceEditor
-          mode="text"
-          theme={this.props.aceTheme}
-          width="100%"
-          height="100%"
-          value={this.props.input2}
-          onChange={e => this.props.setInput(2, e)}
-          setOptions={{ useWorker: false }}
-        />
-        <LabelBar>Output</LabelBar>
-        <AceEditor
-          mode="text"
-          theme={this.props.aceTheme}
-          width="100%"
-          height="100%"
-          readOnly
-          value={this.props.output1}
-          setOptions={{ useWorker: false }}
-        /> */}
+        <ResizableLayout>
+          {this.props.ioConfig.map(element => (
+            <ResizablePane key={`${element.type}_${element.id}`}>
+              <LabelBar>{element.label}</LabelBar>
+              <AceEditor
+                mode="text"
+                theme={this.props.aceTheme}
+                width="100%"
+                height="100%"
+                value={element.type === 'input' ? inputs[element.id] : outputs[element.id]}
+                readOnly={element.type === 'output'}
+                onChange={value => setIOValue({ element, value })}
+                setOptions={{ useWorker: false }}
+              />
+            </ResizablePane>
+          ))}
+        </ResizableLayout>
       </div>
     );
   }
