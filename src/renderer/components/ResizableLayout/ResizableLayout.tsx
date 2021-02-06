@@ -1,100 +1,32 @@
 /* eslint-disable max-classes-per-file */
 import React, { ReactElement } from 'react';
+import GrabberWrapper from './GrabberWrapper';
 import ResizablePane from '../ResizablePane/ResizablePane';
 import styles from './ResizableLayout.modules.less';
-
-type GrabberWrapperProps = {
-  childIdx: number,
-  onResize: (childIdx: number, size: number) => void,
-  isFirstPane?: boolean,
-  size: number | undefined,
-};
-
-type GrabberWrapperState = {
-  resizing: boolean
-};
-
-class GrabberWrapper extends React.Component<GrabberWrapperProps, GrabberWrapperState> {
-  paneRef: React.RefObject<HTMLDivElement>
-
-  grabberRef: React.RefObject<HTMLDivElement>
-
-  constructor(props: GrabberWrapperProps) {
-    super(props);
-
-    this.state = {
-      resizing: false,
-    };
-
-    this.paneRef = React.createRef();
-    this.grabberRef = React.createRef();
-
-    this.onMouseDown = this.onMouseDown.bind(this);
-  }
-
-  onMouseDown(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    if (this.state.resizing) {
-      return;
-    }
-
-    this.setState({ resizing: true });
-    e.currentTarget.style.top = `${e.currentTarget.offsetTop}px`;
-
-    const mouseMoveHandler = (e: MouseEvent) => {
-      e.preventDefault();
-      const paneCurrent = this.paneRef.current;
-      const grabberCurrent = this.grabberRef.current;
-      if (this.state.resizing && grabberCurrent?.offsetParent && paneCurrent) {
-        let grabberBounding = grabberCurrent.getBoundingClientRect();
-        const halfGrabberHeight = grabberBounding.height / 2;
-        grabberCurrent.style.top = `${e.clientY - grabberCurrent.offsetParent.getBoundingClientRect().top - halfGrabberHeight}px`;
-        grabberBounding = grabberCurrent.getBoundingClientRect();
-        const paneBounding = paneCurrent.getBoundingClientRect();
-        this.props.onResize(this.props.childIdx, Math.max(0, paneBounding.bottom - grabberBounding.top));
-      }
-    };
-
-    window.addEventListener('mousemove', mouseMoveHandler);
-    window.addEventListener('mouseup', () => {
-      this.setState({
-        resizing: false,
-      });
-      window.removeEventListener('mousemove', mouseMoveHandler);
-      const grabberCurrent = this.grabberRef.current;
-      if (grabberCurrent) {
-        grabberCurrent.style.top = '';
-      }
-    }, { once: true });
-  }
-
-  render() {
-    const { isFirstPane, size } = this.props;
-    return (
-      <div ref={this.paneRef} className={styles.GrabberWrapper} style={{ height: size }}>
-        {
-          !isFirstPane ?
-            <div ref={this.grabberRef} className={styles.grabber} onMouseDown={this.onMouseDown} /> :
-            undefined
-        }
-        {this.props.children}
-      </div>
-    );
-  }
-}
 
 type ResizableLayoutProps = {
   children?: ReactElement[],
   onPaneResize?: (childIdx: number, size: number) => void,
+  direction: 'column' | 'row'
 };
 
 type ResizableLayoutState = {
+  layoutSize: number,
   sizes: Array<number | undefined>
 };
 
 export default class ResizableLayout extends React.Component<ResizableLayoutProps, ResizableLayoutState> {
+  layoutRef: React.RefObject<HTMLDivElement>
+
   paneRef: React.RefObject<HTMLDivElement>
 
   wrapperRefs: React.RefObject<GrabberWrapper>[]
+
+  resizeObserver: ResizeObserver;
+
+  static defaultProps = {
+    direction: 'column',
+  };
 
   constructor(props: ResizableLayoutProps) {
     super(props);
@@ -104,16 +36,21 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
     };
 
     this.paneRef = React.createRef();
+    this.layoutRef = React.createRef();
     this.wrapperRefs = [];
 
-    // this.onMouseDown = this.onMouseDown.bind(this);
+    this.onLayoutResize = this.onLayoutResize.bind(this);
     this.onPaneResize = this.onPaneResize.bind(this);
-    this.onWindowResize = this.onWindowResize.bind(this);
+
+    this.resizeObserver = new ResizeObserver(this.onLayoutResize);
   }
 
   componentDidMount() {
+    if (!this.layoutRef.current) {
+      throw new Error('Expected layoutRef to be defined');
+    }
+    this.resizeObserver.observe(this.layoutRef.current);
     this.updateSizes();
-    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentDidUpdate() {
@@ -123,7 +60,10 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onWindowResize);
+    if (!this.layoutRef.current) {
+      throw new Error('Expected layoutRef to be defined');
+    }
+    this.resizeObserver.unobserve(this.layoutRef.current);
   }
 
   private onPaneResize(idx: number, size: number) {
@@ -156,28 +96,41 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
     }
   }
 
-  private onWindowResize() {
+  private onLayoutResize() {
     this.updateSizes();
   }
 
   private updateSizes() {
-    const sizes = this.state.sizes;
-    const children = this.props.children || [];
+    const { children = [], direction } = this.props;
+    const { sizes, layoutSize } = this.state;
+    const heightOrWidth = direction === 'column' ? 'height' : 'width';
+    const newLayoutSize = this.layoutRef.current?.getBoundingClientRect()[heightOrWidth] || 0.0;
+    const deltaRatio = newLayoutSize / layoutSize;
 
     this.setState({
-      sizes: children.map((_, i) => this.wrapperRefs[i].current?.paneRef.current?.getBoundingClientRect().height),
+      sizes: children.map(
+        (_, i) => deltaRatio * (sizes[i] || this.wrapperRefs[i].current?.paneRef.current?.getBoundingClientRect()[heightOrWidth] || 0.0)
+      ),
+      layoutSize: newLayoutSize,
     });
   }
 
   render() {
-    const { children = [] } = this.props;
+    const { children = [], direction } = this.props;
     const { sizes } = this.state;
     this.wrapperRefs = children.map((_, i) => this.wrapperRefs[i] || React.createRef());
 
     return (
-      <div className={styles.ResizableLayout}>
+      <div ref={this.layoutRef} className={styles.ResizableLayout} style={{ flexDirection: direction }}>
         {children.map((child: React.ReactElement, i: number) => (
-          <GrabberWrapper ref={this.wrapperRefs[i]} childIdx={i} onResize={this.onPaneResize} isFirstPane={i === 0} size={sizes[i]}>
+          <GrabberWrapper
+            ref={this.wrapperRefs[i]}
+            childIdx={i}
+            direction={direction}
+            onResize={this.onPaneResize}
+            isFirstPane={i === 0}
+            size={sizes[i]}
+          >
             {child.type === ResizablePane ?
               child :
               <ResizablePane>{child}</ResizablePane>
