@@ -14,8 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import AceEditor from 'react-ace';
 import { connect, ConnectedProps } from 'react-redux';
+import ResizableAceEditor from '../../components/ResizableAceEditor/ResizableAceEditor';
 import LabelBar from '../../components/LabelBar/LabelBar';
 import {
   setIOValue,
@@ -36,6 +36,7 @@ function mapStateToProps(state: AppState) {
     inputs: getInputs(state),
     outputs: getOutputs(state),
     aceTheme: state.theme.aceTheme,
+    scriptName: state.scriptManager.openedScriptName,
   };
 }
 
@@ -50,15 +51,16 @@ class IOPage extends React.Component<IOPageProps> {
     const {
       inputs,
       outputs,
+      scriptName,
       setIOValue,
     } = this.props;
     return (
       <div className={styles.IOPage}>
-        <ResizableLayout>
+        <ResizableLayout key={`IOPage-${scriptName}`} memoryKey={`IOPage-${scriptName}`}>
           {this.props.ioConfig.map(element => (
             <ResizablePane key={`${element.type}_${element.id}`}>
               <LabelBar>{element.label}</LabelBar>
-              <AceEditor
+              <ResizableAceEditor
                 mode="text"
                 theme={this.props.aceTheme}
                 width="100%"

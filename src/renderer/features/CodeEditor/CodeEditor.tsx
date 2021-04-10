@@ -72,11 +72,16 @@ class CodeEditor extends React.Component<CodeEditorProps> {
   }
 
   render() {
-    const { aceTheme, code, consoleOutput } = this.props;
+    const {
+      aceTheme,
+      code,
+      consoleOutput,
+      scriptName,
+    } = this.props;
 
     return (
       <div className={styles.CodeEditor}>
-        <ResizableLayout>
+        <ResizableLayout key={`CodeEditor-${scriptName}`} memoryKey={`CodeEditor-${scriptName}`}>
           <ResizablePane>
             <ResizableAceEditor
               mode="javascript"

@@ -37,7 +37,9 @@
       }
     ],
     "max-len": ["error", { "code": 140 }],
+    "no-else-return": ["error", { "allowElseIf": true }],
     "no-param-reassign": ["error", { "props": false }],
+    "no-plusplus": "off",
     "no-restricted-syntax": [
       "error",
       {

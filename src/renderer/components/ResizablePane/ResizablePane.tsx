@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import PropTypes from 'prop-types';
 import styles from './ResizablePane.modules.less';
+
+export type ResizablePaneProps = {
+  initialSize?: number
+};
 
 type ResizablePaneState = {
   size: number | undefined
 };
 
-export default class ResizablePane extends React.Component<{}, ResizablePaneState> {
+export default class ResizablePane extends React.Component<ResizablePaneProps, ResizablePaneState> {
   paneRef: React.RefObject<HTMLDivElement>
 
   grabberRef: React.RefObject<HTMLDivElement>
 
-  constructor(props: {}) {
+  constructor(props: ResizablePaneProps) {
     super(props);
 
     this.state = {
