@@ -1,19 +1,23 @@
 /* eslint-disable max-classes-per-file */
 import React, { ReactElement } from 'react';
+import StateMemory from '../../lib/StateMemory';
 import GrabberWrapper from './GrabberWrapper';
-import ResizablePane from '../ResizablePane/ResizablePane';
+import { ResizablePaneProps } from '../ResizablePane/ResizablePane';
 import styles from './ResizableLayout.modules.less';
 
 type ResizableLayoutProps = {
-  children?: ReactElement[],
+  children?: ReactElement<ResizablePaneProps>[],
+  memoryKey?: string,
   onPaneResize?: (childIdx: number, size: number) => void,
   direction: 'column' | 'row'
 };
 
 type ResizableLayoutState = {
-  layoutSize: number,
+  layoutSize: number | undefined,
   sizes: Array<number | undefined>
 };
+
+const memory = new StateMemory<ResizableLayoutState>();
 
 export default class ResizableLayout extends React.Component<ResizableLayoutProps, ResizableLayoutState> {
   layoutRef: React.RefObject<HTMLDivElement>
@@ -31,9 +35,10 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
   constructor(props: ResizableLayoutProps) {
     super(props);
 
-    this.state = {
+    this.state = memory.hookToComponent(this, props.memoryKey, {
       sizes: [],
-    };
+      layoutSize: undefined,
+    });
 
     this.paneRef = React.createRef();
     this.layoutRef = React.createRef();
@@ -50,12 +55,13 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
       throw new Error('Expected layoutRef to be defined');
     }
     this.resizeObserver.observe(this.layoutRef.current);
-    this.updateSizes();
+
+    this.resetSizes();
   }
 
   componentDidUpdate() {
     if ((this.props.children || []).length !== this.state.sizes.length) {
-      this.updateSizes();
+      this.resetSizes();
     }
   }
 
@@ -100,12 +106,55 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
     this.updateSizes();
   }
 
+  private resetSizes() {
+    const { children, direction } = this.props;
+    const { sizes } = this.state;
+    if (children) {
+      const heightOrWidth = direction === 'column' ? 'height' : 'width';
+      const newLayoutSize = this.layoutRef.current?.getBoundingClientRect()[heightOrWidth] || 0.0;
+      let remainingLayoutSize = newLayoutSize;
+
+      /**
+       * Number of panes that use an automatic initial size
+       */
+      let numAutoSizePanes = 0;
+      const fixedSizes = children?.map((child, i) => {
+        const initialSize = child.props.initialSize || sizes[i];
+        if (initialSize !== undefined) {
+          remainingLayoutSize -= initialSize;
+          return initialSize;
+        }
+        numAutoSizePanes++;
+        return undefined;
+      });
+      // Do this to make sure we fill the entire layout size in case fixedSizes do not fill it!
+      // TODO: Possibly do this in a more controllable fashion / more advanced things
+      const lastFixedSize = fixedSizes[fixedSizes.length - 1];
+      if (numAutoSizePanes === 0 && remainingLayoutSize > 0 && lastFixedSize) {
+        remainingLayoutSize += lastFixedSize;
+        fixedSizes[fixedSizes.length - 1] = undefined;
+        numAutoSizePanes++;
+      }
+      const newSizes = fixedSizes.map(size => {
+        //
+        if (size !== undefined) {
+          return size;
+        }
+        return remainingLayoutSize / numAutoSizePanes;
+      });
+      this.setState({
+        sizes: newSizes,
+        layoutSize: newLayoutSize,
+      });
+    }
+  }
+
   private updateSizes() {
     const { children = [], direction } = this.props;
     const { sizes, layoutSize } = this.state;
     const heightOrWidth = direction === 'column' ? 'height' : 'width';
     const newLayoutSize = this.layoutRef.current?.getBoundingClientRect()[heightOrWidth] || 0.0;
-    const deltaRatio = newLayoutSize / layoutSize;
+    const deltaRatio = layoutSize ? newLayoutSize / layoutSize : 1;
 
     this.setState({
       sizes: children.map(
@@ -119,24 +168,26 @@ export default class ResizableLayout extends React.Component<ResizableLayoutProp
     const { children = [], direction } = this.props;
     const { sizes } = this.state;
     this.wrapperRefs = children.map((_, i) => this.wrapperRefs[i] || React.createRef());
-
+    let grabberPos = 0;
     return (
       <div ref={this.layoutRef} className={styles.ResizableLayout} style={{ flexDirection: direction }}>
-        {children.map((child: React.ReactElement, i: number) => (
-          <GrabberWrapper
-            ref={this.wrapperRefs[i]}
-            childIdx={i}
-            direction={direction}
-            onResize={this.onPaneResize}
-            isFirstPane={i === 0}
-            size={sizes[i]}
-          >
-            {child.type === ResizablePane ?
-              child :
-              <ResizablePane>{child}</ResizablePane>
-            }
-          </GrabberWrapper>
-        ))}
+        {children.map((child, i: number) => {
+          const position = grabberPos;
+          grabberPos += sizes[i] || 0;
+          return (
+            <GrabberWrapper
+              ref={this.wrapperRefs[i]}
+              childIdx={i}
+              direction={direction}
+              onResize={this.onPaneResize}
+              isFirstPane={i === 0}
+              position={position}
+              size={sizes[i]}
+            >
+              {child}
+            </GrabberWrapper>
+          );
+        })}
       </div>
     );
   }

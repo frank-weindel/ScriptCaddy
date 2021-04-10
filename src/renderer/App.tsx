@@ -94,7 +94,7 @@ class App extends React.Component<AppProps> {
     return (
       <div className={styles.App}>
         <ResizableLayout direction="row">
-          <ResizablePane>
+          <ResizablePane initialSize={300}>
             <SideNav />
           </ResizablePane>
           <ResizablePane>

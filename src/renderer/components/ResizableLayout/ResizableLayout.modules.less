@@ -1,16 +1,9 @@
-/**
-  display: flex;
-  flex-flow: column nowrap;
-  flex-grow: 1;
-  position: relative;
-  */
-
 .ResizableLayout {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-grow: 1;
+
+  position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .child {
@@ -18,14 +11,12 @@
 }
 
 .GrabberWrapper {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-grow: 1;
-  height: 100%;
+  position: absolute;
 }
 
 .grabber {
   position: absolute;
-  background-color: green;
+  // Uncomment this line to see the grabbers
+  // background-color: green;
   z-index: 99999;
 }

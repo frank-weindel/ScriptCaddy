@@ -6,6 +6,7 @@ type GrabberWrapperProps = {
   childIdx: number,
   onResize: (childIdx: number, size: number) => void,
   isFirstPane?: boolean,
+  position: number | undefined,
   size: number | undefined,
   direction: 'column' | 'row'
 };
@@ -76,7 +77,12 @@ export default class GrabberWrapper extends React.Component<GrabberWrapperProps,
   }
 
   render() {
-    const { direction, isFirstPane, size } = this.props;
+    const {
+      direction,
+      isFirstPane,
+      position,
+      size,
+    } = this.props;
 
     const grabberStyle = {
       [direction === 'column' ? 'width' : 'height']: '100%',
@@ -89,8 +95,11 @@ export default class GrabberWrapper extends React.Component<GrabberWrapperProps,
         ref={this.paneRef}
         className={styles.GrabberWrapper}
         style={{
-          flexDirection: direction,
+          // flexDirection: direction,
+          [direction === 'column' ? 'top' : 'left']: `${position || 0}px`,
           [direction === 'column' ? 'height' : 'width']: size,
+          [direction === 'column' ? 'width' : 'height']: '100%',
+          ...direction === 'row' && { float: 'left' },
         }}
       >
         {
