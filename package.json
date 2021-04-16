@@ -36,7 +36,7 @@
       "extra/scriptHook.js"
     ]
   },
-  "repository": "https://github.com/frank-weindel/project-x",
+  "repository": "https://github.com/frank-weindel/scriptcaddy",
   "keywords": [
     "Electron",
     "quick",
