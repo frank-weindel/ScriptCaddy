@@ -4,7 +4,9 @@
   <img src="demo.gif">
 </p>
 
-ScriptCaddy is a specialized IDE for cataloging, developing and running short throwaway or regularly useful scripts. How data gets in and out of a script is handled by I/O (input/output) fields configured within the app so you can immediately focus on the script's logic.
+ScriptCaddy is a specialized IDE for cataloging, developing and running short throwaway or regularly useful scripts. How data gets in and out of a script is handled by I/O (input/output) fields configured within the app so you can immediately focus on your script's logic. ScriptCaddy also keeps all of your scripts in one place so they never get lost.
+
+Need to quickly convert some JSON to CSV? Need to convert a unix timestamp to ISO 8601? Need to build a URL from some set of data inputs? Put ScriptCaddy in your developer's toolbelt and reach for it whenever you need it.
 
 ## Feature Roadmap
 
@@ -19,10 +21,6 @@ ScriptCaddy is a specialized IDE for cataloging, developing and running short th
 * Support Python and other scripting runtimes
 * Internationalization / Localization
 
-## License
-
-[GNU General Public License v3.0](LICENSE)
-
 ## Code of Conduct
 
 [Code of Conduct](CODE_OF_CONDUCT.md)
@@ -31,3 +29,6 @@ ScriptCaddy is a specialized IDE for cataloging, developing and running short th
 
 [Contribution Guidelines](CONTRIBUTING.md)
 
+## License
+
+[GNU General Public License v3.0](LICENSE)
