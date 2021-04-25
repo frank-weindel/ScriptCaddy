@@ -1,4 +1,4 @@
-# Contributor Covenant Code of Conduct
+# ScriptCaddy Code of Conduct
 
 ## Our Pledge
 

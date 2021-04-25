@@ -1,4 +1,4 @@
-# ScriptCaddy [![Build Status](https://travis-ci.com/frank-weindel/scriptcaddy.svg?token=ido4ncmx4xST7dTszKWQ&branch=main)](https://travis-ci.com/frank-weindel/scriptcaddy)
+# ScriptCaddy [![Build Status](https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml/badge.svg)](https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml)
 
 <p align="center">
   <img src="demo.gif">
