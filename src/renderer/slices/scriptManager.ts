@@ -132,7 +132,7 @@ export const scriptManager = createSlice({
         if (e instanceof Error) {
           state.scriptConfigError = e.message;
         } else {
-          state.scriptConfigError = `Unknown error: ${e.toString()}`;
+          state.scriptConfigError = `Unknown error: ${String(e)}`;
         }
         state.scriptConfig = [];
       }
@@ -165,7 +165,7 @@ export const getScriptConfigBody = (state: AppState) => (
 );
 
 export const getScriptConfig = (state: AppState) => (
-  state.scriptManager.scriptConfig || ''
+  state.scriptManager.scriptConfig
 );
 
 const {

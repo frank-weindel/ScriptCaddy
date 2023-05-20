@@ -22,7 +22,7 @@ class ThemeManager {
       }
     };
     this._linkEl.rel = 'stylesheet';
-    this._linkEl.href = `themes/${theme}.css`;
+    this._linkEl.href = `assets/themes/${theme}.css`;
     document.head.appendChild(this._linkEl);
     if (oldLinkEl) {
       oldLinkEl.remove();

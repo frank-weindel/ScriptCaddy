@@ -4,6 +4,7 @@ import styles from './ResizablePane.modules.less';
 
 export type ResizablePaneProps = {
   initialSize?: number
+  children: React.ReactNode,
 };
 
 type ResizablePaneState = {

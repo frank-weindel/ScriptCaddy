@@ -37,7 +37,7 @@ export default class ShellExec {
         if (e instanceof Error) {
           result = e.stack || 'No stack found';
         }
-        result = 'Unknown error';
+        result = `Unknown error: ${String(e)}`;
       }
       return result;
     }
