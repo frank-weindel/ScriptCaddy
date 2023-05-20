@@ -1,24 +1,20 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
     "target": "ES6",
-    "moduleResolution": "node",
-    "checkJs": true,
     "allowJs": true,
-    "strict": true,
-    "strictNullChecks": true,
+    "module": "commonjs",
     "jsx": "react",
-    "outDir": "./build",
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "newLine": "lf"
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "*": ["node_modules/*"]
+    }
   },
-  "files": [
-    "./src/main/index.ts",
-    "./src/preload/preload.ts",
-    "./src/globalTypes.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.js"
-  ]
+  "include": ["src/**/*"]
 }

@@ -33,21 +33,21 @@ import './index.less';
 (async () => {
   // eslint-disable-next-line no-console
   console.log('Initializing API...');
-  await window.myAPI.init();
+  const result = await window.myAPI.init('/Users/fweind200/.nodenv/shims/node');
   // eslint-disable-next-line no-console
-  console.log('Initialized.');
+  console.log('Initialized.', result);
 
-  window.addEventListener('message', event => {
-    if (event.data.evt === 'update') {
+  window.myAPI.on('scriptEvent', (event, data) => {
+    if (data.evt === 'update') {
       store.dispatch(refreshScripts());
-    } else if (event.data.evt === 'error') {
-      store.dispatch(consoleLog(event.data));
-    } else if (event.data.evt === 'stdout' || event.data.evt === 'stderr') {
-      store.dispatch(consoleLogRaw(event.data.data));
-    } else if (event.data.evt === 'final') {
-      const outputs = event.data.outputs;
-      const outputIds = Object.keys(event.data.outputs);
-      store.dispatch(consoleLog(JSON.stringify(event.data)));
+    } else if (data.evt === 'error') {
+      store.dispatch(consoleLog(data));
+    } else if (data.evt === 'stdout' || data.evt === 'stderr') {
+      store.dispatch(consoleLogRaw(data.data));
+    } else if (data.evt === 'final') {
+      const outputs = data.outputs;
+      const outputIds = Object.keys(data.outputs);
+      store.dispatch(consoleLog(JSON.stringify(data)));
       outputIds.forEach(id => {
         store.dispatch(
           setIOValue({
@@ -61,7 +61,7 @@ import './index.less';
         );
       });
     }
-  }, false);
+  });
 
   window.store = store;
 

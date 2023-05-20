@@ -13,14 +13,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+// import { app } from 'electron';
 import { ChildProcess } from 'child_process';
-import isDev from 'electron-is-dev';
 import path from 'path';
 import ShellExec from './ShellExec';
+import { app } from 'electron';
 
-const extraPath = isDev ? path.resolve(__dirname, '../../extra') : path.resolve(path.dirname(process.resourcesPath), 'extra');
+const extraPath = app.isPackaged ? path.resolve(app.getAppPath(), '.webpack/renderer/assets/extra') : path.resolve(__dirname, '../../.webpack/renderer/assets/extra');
 // eslint-disable-next-line no-console
 console.log('resourcesPath: ', path.dirname(process.resourcesPath));
+console.log('appPath: ', app.getAppPath());
 // eslint-disable-next-line no-console
 console.log('__dirname: ', __dirname);
 // eslint-disable-next-line no-console
@@ -30,10 +32,14 @@ const scriptHookPath = path.resolve(extraPath, 'scriptHook.js');
 
 type RuntimeDetails = { path: string, version: string };
 
+interface ScriptRunnerOptions {
+  onScriptEvent: (data: any) => void;
+}
+
 export default class ScriptRunner {
   runtimeDetails: false | RuntimeDetails
 
-  constructor() {
+  constructor(private options: ScriptRunnerOptions) {
     this.runtimeDetails = false;
   }
 
@@ -121,9 +127,10 @@ export default class ScriptRunner {
       data.split('\n').forEach((item: string) => {
         if (item !== '') {
           try {
+            this.options.onScriptEvent(JSON.parse(item));
             window.postMessage(JSON.parse(item), '*');
           } catch (e) {
-            window.postMessage({ evt: 'error', data: e }, '*');
+            this.options.onScriptEvent({ evt: 'error', data: e });
           }
         }
       });

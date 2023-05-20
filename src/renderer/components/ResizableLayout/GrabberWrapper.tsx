@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import styles from './ResizableLayout.modules.less';
 
@@ -9,6 +8,7 @@ type GrabberWrapperProps = {
   position: number | undefined,
   size: number | undefined,
   direction: 'column' | 'row'
+  children: React.ReactNode
 };
 
 type GrabberWrapperState = {

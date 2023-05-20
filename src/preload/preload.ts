@@ -18,56 +18,28 @@ import {
   ipcRenderer,
   shell,
 } from 'electron';
-import watch from 'node-watch';
 
 import {
   MainApi,
   MyApi,
+  TheMainApi,
 } from '../common/RendererApis';
-import ScriptLister from './ScriptLister';
-import ScriptRunner from './ScriptRunner';
+import { asyncRpcSender } from '../common/AsyncRpc';
 
 // eslint-disable-next-line no-console
 console.log('process.env', process.env);
 
-const scriptRunner = new ScriptRunner();
-(async () => {
-  // @ts-ignore
-  await watch(ScriptLister.getScriptDir(), {}, (evt, name) => {
-    // eslint-disable-next-line no-console
-    console.log('%s changed.', evt, name);
-    window.postMessage({ evt: 'update', name }, '*');
-  });
-})();
-
 contextBridge.exposeInMainWorld<MyApi>('myAPI', {
-  init: async runtimePath => {
-    return scriptRunner.init(runtimePath);
-  },
-  runScript: async (scriptName, inputs) => {
-    const scriptPath = ScriptLister.getScriptPath(scriptName);
-    // const escapedScriptPath = scriptPath.replace(/["]/g, '\\"').replace(/\n/g, '\\n').replace(/\\/g, '\\\\');
-    return scriptRunner.runScript(scriptPath, inputs);
-  },
-  stopScript: async () => {
-    return scriptRunner.stopScript();
-  },
-  saveScript: async (scriptName, content) => {
-    return ScriptLister.saveScript(scriptName, content);
-  },
-  getScriptList: async () => {
-    return ScriptLister.getScriptList();
-  },
-  getScript: async scriptName => {
-    return ScriptLister.loadScript(scriptName);
-  },
-  newScript: async scriptName => {
-    return ScriptLister.newScript(scriptName);
-  },
-  openScriptFileManager: scriptName => {
-    const scriptPath = ScriptLister.getScriptPath(scriptName);
-    shell.showItemInFolder(scriptPath);
-  },
+  ...asyncRpcSender<TheMainApi>(ipcRenderer, 'toMain', {
+    init: true,
+    runScript: true,
+    stopScript: true,
+    saveScript: true,
+    getScriptList: true,
+    getScript: true,
+    newScript: true,
+    openScriptFileManager: true,
+  }),
   on: (channel, listener) => {
     return ipcRenderer.on(channel, listener);
   },

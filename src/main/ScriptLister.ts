@@ -24,7 +24,7 @@ import {
   ensureDirSync,
 } from '../common/FileHelpers';
 import { Scrip } from '../common/types';
-import JavascriptParser from './parsers/JavascriptParser';
+import JavascriptParser from '../preload/parsers/JavascriptParser';
 
 const appHomeDir = path.join(os.homedir(), 'ScriptCaddy');
 const scriptDir = path.join(appHomeDir, 'My Scripts');

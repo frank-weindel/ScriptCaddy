@@ -1,0 +1,3 @@
+- [x] Get MacOS build working
+- [ ] Test Windows build
+- [ ] Get GitHub Action builds working
