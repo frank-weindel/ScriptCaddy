@@ -1,3 +1,8 @@
 - [x] Get MacOS build working
-- [ ] Test Windows build
-- [ ] Get GitHub Action builds working
+- [x] Test Windows build
+- [x] Get GitHub Action builds working
+- [x] Fix up documentation / contrib guidelines
+- [ ] Fix windows installer
+- [ ] Sign installers
+- [ ] ???
+- [ ] Release!!
