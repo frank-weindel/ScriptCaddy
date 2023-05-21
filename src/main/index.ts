@@ -34,6 +34,9 @@ import { Message, TheMainApi } from '../common/RendererApis';
 import ScriptLister from './ScriptLister';
 import ScriptRunner from './ScriptRunner';
 import { asyncRpcReceiver } from '../common/AsyncRpc';
+import squirrelStartup from 'electron-squirrel-startup';
+
+if (squirrelStartup) process.exit(0);
 
 // eslint-disable-next-line no-console
 console.log('Starting ScriptCaddy');
