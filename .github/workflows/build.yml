@@ -1,22 +1,39 @@
 name: Build
-on: push
+on: [push, pull_request]
+
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    if: github.ref == 'refs/heads/main'
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest] # macos-latest
+  build_on_linux:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
-        with:
-          node-version: 10
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          release: true
-          args: -c.snap.publish=github
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
+
+  build_on_mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
+
+  build_on_win:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+    - name: install dependencies
+      run: npm install
+    - name: build
+      run: npm run make
