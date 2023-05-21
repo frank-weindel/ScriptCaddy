@@ -1,6 +1,6 @@
 # How to Contribute
 
-This section describes best practices for submitting issues / feature requests and PRs. To learn how to build & run ScriptCaddy on your local machine see the [How to Set Up Your Dev Environment](#how-to-set-up-your-dev-environment] section below.
+This section describes best practices for submitting issues / feature requests and PRs. To learn how to build & run ScriptCaddy on your local machine see the [How to Set Up Your Dev Environment](#how-to-set-up-your-dev-environment) section below.
 
 These guidelines are subject to change and potentially change rapidly since this is a young project.
 
@@ -36,10 +36,10 @@ npm start
 
 ## Build executable for current OS
 
-ScriptCaddy uses Electron Builder in order to build executable packages/installers for all platforms. This command builds it for your current OS.
+ScriptCaddy uses Electron Forge in order to build executable packages/installers for all platforms. This command builds it for your current OS.
 
 ```
-npm run release
+npm run make
 ```
 
 ## Unit Testing
