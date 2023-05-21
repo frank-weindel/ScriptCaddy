@@ -7,7 +7,7 @@ jobs:
   publish_on_linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@master
       with:
         node-version: 16.x
@@ -21,7 +21,7 @@ jobs:
   publish_on_mac:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@master
       with:
         node-version: 16.x
@@ -35,7 +35,7 @@ jobs:
   publish_on_win:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@master
       with:
         node-version: 16.x
