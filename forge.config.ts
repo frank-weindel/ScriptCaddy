@@ -12,6 +12,15 @@ const config: ForgeConfig = {
   packagerConfig: {},
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  publishers: [
+    new PublisherGithub({
+      repository: {
+        owner: 'frank-weindel',
+        name: 'scriptcaddy',
+      },
+      prerelease: true,
+    }),
+  ],
   plugins: [
     new WebpackPlugin({
       mainConfig,
@@ -29,13 +38,6 @@ const config: ForgeConfig = {
           },
         ],
       },
-    }),
-    new PublisherGithub({
-      repository: {
-        owner: 'frank-weindel',
-        name: 'scriptcaddy',
-      },
-      prerelease: true,
     }),
   ],
 };
