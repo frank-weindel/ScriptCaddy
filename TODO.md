@@ -2,7 +2,7 @@
 - [x] Test Windows build
 - [x] Get GitHub Action builds working
 - [x] Fix up documentation / contrib guidelines
-- [ ] Fix windows installer
+- [x] Fix windows installer
 - [ ] Sign installers
 - [ ] ???
 - [ ] Release!!

@@ -10,6 +10,7 @@ import { rendererConfig } from './webpack.renderer.config';
 
 const config: ForgeConfig = {
   packagerConfig: {
+    name: 'ScriptCaddy',
     icon: './images/icons/scriptcaddy',
   },
   rebuildConfig: {},
