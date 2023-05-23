@@ -1,6 +1,6 @@
 {
   "name": "scriptcaddy",
-  "productName": "scriptcaddy",
+  "productName": "ScriptCaddy",
   "version": "0.0.8",
   "description": "A developer's handy toolchest",
   "main": ".webpack/main",
