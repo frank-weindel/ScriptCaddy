@@ -60,7 +60,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement by sending a message to
-[@foxtrotwhiskey](https://twitter.com/foxtrotwhiskey) on Twitter. All complaints will
+foxtrotwhiskey9#6517 on Discord. All complaints will
 be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
