@@ -128,7 +128,6 @@ export default class ScriptRunner {
         if (item !== '') {
           try {
             this.options.onScriptEvent(JSON.parse(item));
-            window.postMessage(JSON.parse(item), '*');
           } catch (e) {
             this.options.onScriptEvent({ evt: 'error', data: e });
           }

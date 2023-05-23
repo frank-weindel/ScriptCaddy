@@ -105,10 +105,24 @@ export const scriptManager = createSlice({
       state.scriptConfigBodyDirty = false;
     },
     consoleLog: (state, action) => {
-      state.consoleOutput += `${action.payload}\n`;
+      let payload = action.payload;
+      if (payload.data instanceof Error) {
+        payload.data = payload.data.toString();
+      }
+      if (typeof payload !== 'string') {
+        payload = JSON.stringify(payload);
+      }
+      state.consoleOutput += `${payload}\n`;
     },
     consoleLogRaw: (state, action) => {
-      state.consoleOutput += `${action.payload}`;
+      let payload = action.payload;
+      if (payload.data instanceof Error) {
+        payload.data = payload.data.message;
+      }
+      if (typeof payload !== 'string') {
+        payload = JSON.stringify(payload);
+      }
+      state.consoleOutput += `${payload}`;
     },
     setScriptBody: (state, action) => {
       state.scriptBody = action.payload;
