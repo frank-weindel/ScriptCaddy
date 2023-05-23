@@ -71,11 +71,13 @@ class Modal extends React.Component<ModalProps> {
     }
   }
 
-  onOk() {
+  onOk(e: React.SyntheticEvent) {
+    e.preventDefault();
     this.props.resolveModal(this.inputRef.current?.value || '');
   }
 
-  onYes() {
+  onYes(e: React.SyntheticEvent) {
+    e.preventDefault();
     this.props.resolveModal(true);
   }
 
@@ -103,7 +105,7 @@ class Modal extends React.Component<ModalProps> {
       buttons = (
         <form>
           <button type="submit" onClick={this.onYes}>Yes</button>
-          <button type="submit" onClick={this.onNo}>No</button>
+          <button type="button" onClick={this.onNo}>No</button>
           <button type="button" onClick={this.onCancel}>Cancel</button>
         </form>
       );
