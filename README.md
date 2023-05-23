@@ -3,7 +3,7 @@
   <a href="https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml"><img src="https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml/badge.svg" alt="Build Status"></a>
 </p>
 
-# ScriptCaddy :toolbox:
+# ScriptCaddy
 
 ScriptCaddy is a specialized IDE for cataloging, developing and running short throwaway or othwerwise useful scripts. How data gets in and out of a script is handled by I/O (input/output) fields configured within the app so you only need to focus on script logic. ScriptCaddy also keeps all of your scripts in one place so they never get lost.
 
