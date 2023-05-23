@@ -19,6 +19,8 @@ I built this because I always wanted a "go to" place where I could access my own
 
 ## Feature Roadmap
 
+* Signed binaries for Mac and Windows
+  * Currently to run the pre-built binaries you must explicitly opt-out of code signing verification on Mac and Windows.
 * Provide interface for installing/uninstalling external packages (npm packages)
 * Improved UI / Themes
 * New I/O field features and types
