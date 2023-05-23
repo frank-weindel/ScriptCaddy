@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="images/logo.png">
+  <img src="images/logo.png" width="200" height="200"><br/>
+  <a href="https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml"><img src="https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml/badge.svg" alt="Build Status"></a>
 </p>
 
-# ScriptCaddy [![Build Status](https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml/badge.svg)](https://github.com/frank-weindel/scriptcaddy/actions/workflows/build.yml)
+# ScriptCaddy :toolbox:
 
 ScriptCaddy is a specialized IDE for cataloging, developing and running short throwaway or regularly useful scripts. How data gets in and out of a script is handled by I/O (input/output) fields configured within the app so you can immediately focus on your script's logic. ScriptCaddy also keeps all of your scripts in one place so they never get lost.
 
